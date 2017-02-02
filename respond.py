@@ -1,5 +1,5 @@
-import bot
 
+import bot
 
 class Start:
 	@staticmethod

@@ -1,22 +1,20 @@
 import web
 import bot
-import tokens
-
-# for testing
-key = tokens.test
 
 urls = (
 		'/webhook', 'webhook',
 		'/(.*)', 'empty'
 )
 app = web.application(urls, globals())
-db = web.database(dbn='postgres', db='detehdd6fac66k', user='ajgessvxsdughz', pw='ff89f60c9833762748cb7325758b4d65b2e48bff957bc30431441287e19d71c2', host='ec2-54-221-255-153.compute-1.amazonaws.com')
+#db = web.database(dbn='postgres', db='d8bqtbsqkdmogn', user='tatvwdylfhnthu', pw='9aa3223d040c65ef06e9362022004fe9bb5b3e3f44b67ad4101f549fddaa8177', host='ec2-54-204-1-40.compute-1.amazonaws.com')
 
 class webhook:
 	def GET(self):
-		return bot.verify(web.input(), key)
+		return bot.verify(web.input())
 	def POST(self):
-		return bot.recieve(web.data(), db)
+		id = bot.messagedata(web.data())['id']
+		bot.send(id, "test")
+		#return bot.recieve(web.data(), db)
 
 class empty:
 	def GET(self, name):

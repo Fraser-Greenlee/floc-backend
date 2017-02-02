@@ -1,9 +1,10 @@
 
-def verify(req,token):
+# import webhook_key from tokens.py
+from tokens import webhook_key
+
+def verify(req):
 	print req
-	if 'hub.verify_token' in req and req['hub.verify_token'] == token:
+	if 'hub.verify_token' in req and req['hub.verify_token'] == webhook_key:
 		return req['hub.challenge']
 	else:
 		return 'bad request'
-
-#	/webhook?hub.mode=subscribe&hub.challenge=2077712982&hub.verify_token=messages

@@ -1,4 +1,13 @@
+
+## list of keys
+
 test = 'kjhvvjhkvkgCGHgCJHjghcY6i7Cc7tt'
 page = {
-	'Secret':'EAAFuDsxVFzwBAGuWyDrA3fhbZAl4VE3G5AdvZA8MqPJ7wRQmDqr9sEA4V4USD6uLli3BoSJslJZBJPE0YI3bF5hwLCnZBraEaFtlrzRwjhf0SZARJBr92HG19ZCXi0BaIwcNbef0lzJJpO1bM3lzvOu5ast8INKG0ZBeLwBZCeDbrAZDZD'
+	'SecretTestBot':'EAAFuDsxVFzwBAAZAx327BcjFmguuZCCnWFHooFrIyDAYeyjESavOOZBhX7wrtapPFnEYmzJH7WuQNjYyJw2vFmULW7k6NQkP16Y50rfOHFiXRJRsOcFOlnCE5xjgws44uzRGwhCaCFIMzU7X310RG4uzZAZCKxO5B28SFrGizyQZDZD'
 }
+
+## keys in use
+
+# for testing
+webhook_key = test
+access_token = page['SecretTestBot']
