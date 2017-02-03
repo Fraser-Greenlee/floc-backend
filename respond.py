@@ -1,5 +1,6 @@
 
 import bot
+from tokens import db
 
 class Start:
 	@staticmethod
@@ -7,12 +8,12 @@ class Start:
 		return False
 
 	@staticmethod
-	def recieve(db,id,msg):
+	def recieve(id,msg):
 		bot.send(
 			id,
 			"""Welcome to Secret.\nA place for ananymous group chats on Messenger."""
 		)
-		bot.setmessage(db,id,'chat')
+		bot.setmessage(id,'chat')
 
 
 class Chat:
@@ -21,7 +22,7 @@ class Chat:
 		return False
 
 	@staticmethod
-	def recieve(db,id,msg):
+	def recieve(id,msg):
 		# send message to all other users
 		q = db.query("SELECT id FROM users WHERE id<>"+str(id))
 		idlist = []

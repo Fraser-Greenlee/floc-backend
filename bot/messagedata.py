@@ -3,8 +3,9 @@ import json
 
 def messagedata(data):
 	data = json.loads(data)
+	print data
 	try:
-		id = data['entry'][0]['messaging'][0]['sender']['id']
+		id = int(data['entry'][0]['messaging'][0]['sender']['id'])
 		message = data["entry"][0]["messaging"][0]['message']['text']
 		return {
 			'id':id,
