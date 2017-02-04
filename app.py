@@ -1,11 +1,6 @@
+# -*- coding: utf-8 -*-
 import web
 import bot
-
-import os
-import sys
-print "DATABASE_URL"
-print os.environ.get('DATABASE_URL')
-sys.stdout.flush()
 
 urls = (
 		'/webhook', 'webhook',
