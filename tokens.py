@@ -8,7 +8,7 @@ def urltodb(url):
 	url[-1] = url[-1][url[-1].index('/')+1:]
 	return web.database(dbn=url[0],db=url[4],user=url[1],pw=url[2],host=url[3])
 
-
+TEST = False
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL is None:
 	# if not on heroku then testing
