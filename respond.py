@@ -2,6 +2,8 @@
 import bot
 from tokens import db
 
+def txt(msg):
+	return {'text':unicode(msg, 'utf-8')}
 
 class Start:
 	@staticmethod
@@ -12,7 +14,7 @@ class Start:
 	def recieve(id,message):
 		bot.send(
 			id,
-			"""Welcome to Secret.\nA place for anonymous group chats on Messenger."""
+			txt("🐙 Welcome to Secret.\nA place for anonymous group chats on Messenger.")
 		)
 		bot.setmessage(id,'chat')
 
@@ -60,16 +62,12 @@ class Chat:
 
 ################ Error messages
 
-def errtxt(string):
-	return {'text':unicode(string, 'utf-8')}
-
-
 class ErrLen:
 	@staticmethod
 	def start(id):
 		bot.send(
 			id,
-			errtxt("🐙 Not Sent\nMust be under 200 characters.")
+			txt("🐙 Not Sent\nMust be under 200 characters.")
 		)
 
 	@staticmethod
@@ -82,7 +80,7 @@ class ErrLen:
 				if str(e) == 'ErrLen':
 					bot.send(
 						id,
-						errtxt("🐙 Still too long.\nTry removing emojis.")
+						txt("🐙 Still too long.\nTry removing emojis.")
 					)
 					return False
 		# send to regular chat
@@ -95,7 +93,7 @@ class ErrNewlines:
 	def start(id):
 		bot.send(
 			id,
-			errtxt("🐙 Not Sent\nMust have less than 5 newline characters.")
+			txt("🐙 Not Sent\nMust have less than 5 newline characters.")
 		)
 
 	@staticmethod
@@ -108,7 +106,7 @@ class ErrNewlines:
 				if str(e) == 'ErrNewlines':
 					bot.send(
 						id,
-						errtxt("🐙 Still too long.\nTry removing emojis.")
+						txt("🐙 Still too long.\nTry removing emojis.")
 					)
 					return False
 		# send to regular chat
@@ -121,7 +119,7 @@ class ErrSticker:
 	def start(id):
 		bot.send(
 			id,
-			errtxt("🐙 Not Sent\nI can't send stickers😢.")
+			txt("🐙 Not Sent\nI can't send stickers😢.")
 		)
 
 	@staticmethod
@@ -130,7 +128,7 @@ class ErrSticker:
 		if message == 'Err:sticker':
 			bot.send(
 				id,
-				errtxt("🐙 That is still a sticker.\nWhy not send a GIF instead?")
+				txt("🐙 That is still a sticker.\nWhy not send a GIF instead?")
 			)
 			return False
 		# send to regular chat
