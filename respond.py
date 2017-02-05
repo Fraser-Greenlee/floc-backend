@@ -17,7 +17,7 @@ class Start:
 		bot.setmessage(id,'chat')
 
 
-def textfilter(text):#text = "G\nG\nG\nGo\nJ"
+def textfilter(text):
 	if len(text) > 200:
 		raise Exception('ErrLen')
 	if len(text.split('\n'))-1 >= 5:
@@ -130,7 +130,7 @@ class ErrSticker:
 		if message == 'Err:sticker':
 			bot.send(
 				id,
-				errtxt("🐙 That is still a sticker.")
+				errtxt("🐙 That is still a sticker.\nWhy not send a GIF instead?")
 			)
 			return False
 		# send to regular chat
