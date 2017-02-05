@@ -15,7 +15,8 @@ def send(id,message,**options):
 			'recipient': {
 				'id': id
 			},
-			'message': message
+			'message': message,
+			'notification_type': 'NO_PUSH'
 		}
 		print "SEND"
 		print messageData
