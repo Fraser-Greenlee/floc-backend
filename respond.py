@@ -7,10 +7,6 @@ def txt(msg):
 
 class Start:
 	@staticmethod
-	def start(id):
-		return False
-
-	@staticmethod
 	def recieve(id,message):
 		bot.send(
 			id,
@@ -18,6 +14,7 @@ class Start:
 		)
 		bot.setmessage(id,'chat')
 
+#################
 
 def textfilter(text):
 	if len(text) > 200:
@@ -25,6 +22,19 @@ def textfilter(text):
 	if len(text.split('\n'))-1 >= 5:
 		raise Exception('ErrNewlines')
 	return text
+
+def fromMsg(raw_message):
+	message = {}
+	if 'text' in raw_message:
+		message['text'] = raw_message['text']
+	if 'attachments' in raw_message:
+		message['attachment'] = raw_message['attachments'][0]
+		if 'sticker_id' in raw_message['attachments'][0]['payload']:
+			return 'Err:sticker'
+	#
+	return message
+
+
 
 class Chat:
 	@staticmethod
@@ -35,6 +45,7 @@ class Chat:
 	def recieve(id,message):
 		## filter message
 		# catch Err's
+		message = fromMsg(message)
 		if message == 'Err:sticker':
 			bot.setmessage(id,'ErrSticker')
 			return False

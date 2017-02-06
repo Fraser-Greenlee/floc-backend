@@ -5,7 +5,7 @@ import json
 # import messagkey from tokens.py file
 from tokens import access_token
 
-def send(id,message,**options):
+def send(id, message,**options):
 	if type(id) == list:
 		lid = id
 		for id in lid:
