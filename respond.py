@@ -62,21 +62,27 @@ class Chat:
 		## send message
 		q = db.query("SELECT id FROM users WHERE id<>"+str(id))
 		# send to all ids
-		for r in q:
-			id = r['id']
-			try:
-				bot.send(
-					id,
-					message
-				)
-			except bot.SendError as e:
-				print "code:", e.code
-				if e.code == 200:
-					# user has left, delete user from database
-					db.query("DELETE FROM users WHERE id="+str(id))
-				else:
-					# proper error
-					print "ERROR:", e.jsn
+		return False
+
+'''
+for r in q:
+	id = r['id']
+	try:
+		bot.send(
+			id,
+			message
+		)
+	except bot.SendError as e:
+		print "code:", e.code
+		if e.code == 200:
+			# user has left, delete user from database
+			db.query("DELETE FROM users WHERE id="+str(id))
+		else:
+			# proper error
+			print "ERROR:", e.jsn
+'''
+a = 3
+
 #
 
 
