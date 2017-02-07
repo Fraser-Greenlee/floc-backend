@@ -30,6 +30,7 @@ class Greeting:
 		else:
 			return True
 
+
 # Add/Remove Get Started button
 class Getstarted:
 	@staticmethod
