@@ -1,7 +1,6 @@
 import requests
 from tokens import access_token
 
-
 # Add/Remove Front page info
 class Greeting:
 	@staticmethod

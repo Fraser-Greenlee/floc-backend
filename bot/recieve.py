@@ -1,6 +1,6 @@
 import respond, json
 from tokens import db
-
+from error import SendError
 
 def recieve(data):
 	data = json.loads(data)
@@ -17,7 +17,7 @@ def recieve(data):
 				try:
 					recieveVal(info)
 				except Exception as e:
-					print "Bad messaging json.", e
+					print "recieveVal error,", str(e)
 		except Exception as e:
 			print "Bad entry json.", e
 	#

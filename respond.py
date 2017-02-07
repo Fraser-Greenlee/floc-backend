@@ -10,7 +10,7 @@ class Start:
 	def recieve(id,message):
 		bot.send(
 			id,
-			txt("🐙 Welcome to Secret.\nA place for anonymous group chats on Messenger.")
+			txt("🐧 Welcome to Secret.\nA place for anonymous group chats on Messenger.")
 		)
 		bot.setmessage(id,'chat')
 
@@ -33,7 +33,7 @@ def fromMsg(raw_message):
 			return 'Err:sticker'
 	#
 	return message
-
+#
 
 
 class Chat:
@@ -61,14 +61,23 @@ class Chat:
 					return False
 		## send message
 		q = db.query("SELECT id FROM users WHERE id<>"+str(id))
-		idlist = []
+		# send to all ids
 		for r in q:
-			idlist.append(r['id'])
-		# send to all ids in list
-		bot.send(
-			idlist,
-			message
-		)
+			id = r['id']
+			try:
+				bot.send(
+					id,
+					message
+				)
+			except bot.SendError as e:
+				print "code:", e.code
+				if e.code == 200:
+					# user has left, delete user from database
+					db.query("DELETE FROM users WHERE id="+str(id))
+				else:
+					# proper error
+					print "ERROR:", e.jsn
+#
 
 
 ################ Error messages
@@ -78,7 +87,7 @@ class ErrLen:
 	def start(id):
 		bot.send(
 			id,
-			txt("🐙 Not Sent\nMust be under 200 characters.")
+			txt("🐧 Not Sent\nMust be under 200 characters.")
 		)
 
 	@staticmethod
@@ -91,7 +100,7 @@ class ErrLen:
 				if str(e) == 'ErrLen':
 					bot.send(
 						id,
-						txt("🐙 Still too long.\nTry removing emojis.")
+						txt("🐧 Still too long.\nTry removing emojis.")
 					)
 					return False
 		# send to regular chat
@@ -104,7 +113,7 @@ class ErrNewlines:
 	def start(id):
 		bot.send(
 			id,
-			txt("🐙 Not Sent\nMust have less than 5 newline characters.")
+			txt("🐧 Not Sent\nMust have less than 5 newline characters.")
 		)
 
 	@staticmethod
@@ -117,7 +126,7 @@ class ErrNewlines:
 				if str(e) == 'ErrNewlines':
 					bot.send(
 						id,
-						txt("🐙 Still too long.\nTry removing emojis.")
+						txt("🐧 Still too long.\nTry removing emojis.")
 					)
 					return False
 		# send to regular chat
@@ -130,7 +139,7 @@ class ErrSticker:
 	def start(id):
 		bot.send(
 			id,
-			txt("🐙 Not Sent\nI can't send stickers😢.")
+			txt("🐧 Not Sent\nI can't send stickers😢.")
 		)
 
 	@staticmethod
@@ -139,7 +148,7 @@ class ErrSticker:
 		if message == 'Err:sticker':
 			bot.send(
 				id,
-				txt("🐙 That is still a sticker.\nWhy not send a GIF instead?")
+				txt("🐧 That is still a sticker.\nWhy not send a GIF instead?")
 			)
 			return False
 		# send to regular chat
