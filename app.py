@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import web
 import bot
+import sys
 
 urls = (
 		'/webhook', 'webhook',
@@ -12,6 +13,10 @@ class webhook:
 	def GET(self):
 		return bot.verify(web.input())
 	def POST(self):
+		# show request data
+		print web.data()
+		sys.stdout.flush()
+		#
 		return bot.recieve(web.data())
 
 class empty:
