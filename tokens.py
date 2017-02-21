@@ -16,6 +16,7 @@ if DATABASE_URL is None:
 	# goto local database
 	db = web.database(dbn='postgres',db='secret',user='postgres',pw='',host='localhost')
 else:
+	print 'DATABASE_URL', DATABASE_URL
 	db = urltodb(DATABASE_URL)
 
 ## list of keys

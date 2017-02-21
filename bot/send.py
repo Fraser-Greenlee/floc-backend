@@ -51,3 +51,5 @@ def sendList(idlist, message):#idlist, message = [[1166543533459050L],{'text':'h
 			errors.append(json.loads(r._content)['error'])
 	return errors
 #
+
+#	heroku addons:attach my-originating-app::DATABASE --secret-messenger
