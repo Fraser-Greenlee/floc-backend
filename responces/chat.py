@@ -1,5 +1,4 @@
 from datetime import datetime
-from dateutil.tz import tzlocal
 import bot, random
 from emojis import emojis
 from tokens import db
