@@ -11,15 +11,21 @@ def urltodb(url):#url = DATABASE_URL
 	return web.database(dbn=url[0],db=url[4],user=url[1],pw=url[2],host=url[3])
 
 LOCAL_TEST = False
-DATABASE_URL = os.environ.get('DATABASE_URL')
-REMOTE_TEST = DATABASE_URL == REMOTE_TEST_DB_URL
+
+# if remote test
+DATABASE_URL = os.environ.get('HEROKU_POSTGRESQL_ROSE_URL') is None
 if DATABASE_URL is None:
-	# if not on heroku then testing
-	LOCAL_TEST = True
-	# goto local database
-	db = web.database(dbn='postgres',db='secret',user='postgres',pw='',host='localhost')
+	# if live
+	DATABASE_URL = os.environ.get('DATABASE_URL')
+	if DATABASE_URL is None:
+		# if local
+		LOCAL_TEST = True
+		db = web.database(dbn='postgres',db='secret',user='postgres',pw='',host='localhost')
+	else:
+		db = urltodb(DATABASE_URL)
 else:
 	db = urltodb(DATABASE_URL)
+	REMOTE_TEST = True
 
 ## list of keys
 webhook = 'kjhvvjhkvkgCGHgCJHjghcY6i7Cc7tt'
