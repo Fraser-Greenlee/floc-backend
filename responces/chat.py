@@ -41,6 +41,7 @@ def emoji_spam(sess,msg):
 	elif dff > 600000:
 		# off for over 10mins, reset emoji
 		# set to a random unused value
+		print sess.identity
 		sess.set(
 			identity=db.query("""
 				with new_identity as (
@@ -56,6 +57,7 @@ def emoji_spam(sess,msg):
 				select identity from users where id=1166543533459050
 				""")[0]['identity']
 		)
+		print sess.identity
 	return sess
 
 

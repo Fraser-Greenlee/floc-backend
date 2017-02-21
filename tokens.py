@@ -19,23 +19,25 @@ if DATABASE_URL is None:
 	# goto local database
 	db = web.database(dbn='postgres',db='secret',user='postgres',pw='',host='localhost')
 else:
-	print 'DATABASE_URL', DATABASE_URL
 	db = urltodb(DATABASE_URL)
 
 ## list of keys
 webhook = 'kjhvvjhkvkgCGHgCJHjghcY6i7Cc7tt'
 page = {
-	'SecretTestBot':'EAAFuDsxVFzwBACGpc5UdzgIZB6CNlGuW1FbuCqYRN7OnXUwRq6KvGyHmP8mGbnqTL2cMHnFkVKj4uFCW6spSGWWFx9IgwenwsXE3iCpqwXbyW3HPewsgVX0sN4AHG5noOTbed4bqHHVgrZAwZCu3kSbd5RolfuWYHrFcdgwJAZDZD',
-	'SecretBotLiveTest':'EAAFuDsxVFzwBAF7y9LVZBwwKREkq4SxZCPXxCxFytB4KAZCDZCnvnpuYL4ne1aVjffyJjOaZB9yKwRgqrAqEDtZCq6D48E7pNffMNFNWzcW6Ih3i48bCrhCZCobvZCqjCnGZB6vNyYWZB2E0zaiKANcipYL4WwDCHvN8R818sSZCFZCTKAZDZD',
-	'SecretBot':'EAAae68efi70BAPQUsusZCkfTm1KMRfETnLU3207hUMI5rywtFeKGe6plb7qpWybhKyVsu306fYC8ZA7fG9p7Mg4qi67KkP2XDqJ8ZAkUDg6ZCTYSDBiRQN8ZC48xcyV8voal8pXMyrg9VIfKtjiSEljYZC3QvsC11ZAwiJ7hXaKRQZDZD'
+	'Test':'EAAFuDsxVFzwBACGpc5UdzgIZB6CNlGuW1FbuCqYRN7OnXUwRq6KvGyHmP8mGbnqTL2cMHnFkVKj4uFCW6spSGWWFx9IgwenwsXE3iCpqwXbyW3HPewsgVX0sN4AHG5noOTbed4bqHHVgrZAwZCu3kSbd5RolfuWYHrFcdgwJAZDZD',
+	'RemoteTest':'EAAU5ILKtVX8BADykzKRhBdP2lAavUeBK7ZBOepKngyZBsJbZCZB705ynLqru6WTBykj1rE2HupRtJoUo3UlkOduoGKZBzkzfQlFj5Yn8ZC34C2PlL6wIaJAZBncUgaz3LwZANiszUbZCw2jQrsipFvsKCXklvcAMywBpv8ZAJsMXrmuQZDZD',
+	'Live':'EAAae68efi70BAPQUsusZCkfTm1KMRfETnLU3207hUMI5rywtFeKGe6plb7qpWybhKyVsu306fYC8ZA7fG9p7Mg4qi67KkP2XDqJ8ZAkUDg6ZCTYSDBiRQN8ZC48xcyV8voal8pXMyrg9VIfKtjiSEljYZC3QvsC11ZAwiJ7hXaKRQZDZD'
 }
 
 ## keys in use
 
 webhook_key = webhook
 if LOCAL_TEST:
-	access_token = page['SecretTestBot']
+	print 'Local Testing'
+	access_token = page['Test']
 elif REMOTE_TEST:
-	access_token = page['SecretBotLiveTest']
+	print 'Remote Testing'
+	access_token = page['RemoteTest']
 else:
-	access_token = page['SecretBot']
+	print 'Live'
+	access_token = page['Live']

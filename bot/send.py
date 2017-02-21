@@ -7,7 +7,6 @@ from tokens import access_token
 from error import SendError
 
 def send(id, message):
-	print '-- SEND --'
 	if type(message) == str:
 		message = {'text':unicode(message, 'utf-8')}
 	if type(id) == list:
@@ -34,15 +33,16 @@ def sendSingle(id, message):
 
 
 def sendList(idlist, message):#idlist, message = [[1166543533459050L],{'text':'hello'}]
-	print 'sendList'
-	start = datetime.datetime.now()
 	# make params for each request
 	messageDataList = [{'recipient': {'id': id}, 'message': message, 'notification_type': 'NO_PUSH'} for id in idlist]
 	# make request list
 	rs = (grequests.post('https://graph.facebook.com/v2.6/me/messages', params = {'access_token':access_token}, json=messageData) for messageData in messageDataList)
 	# send all simultaneously
+	start = datetime.datetime.now()
 	resps = grequests.map(rs)
-	print 'time to send:', (datetime.datetime.now() - start)
+	print ' '
+	print 'Time to send:', (datetime.datetime.now() - start)
+	print ' '
 	# return errors in list
 	errors = []
 	for r in resps:

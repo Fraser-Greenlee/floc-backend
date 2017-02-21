@@ -32,7 +32,7 @@ def recieveVal(info, sess):
 			return sess, False
 
 		# manage users in database
-		q = db.query("SELECT * FROM users WHERE id="+str(id))
+		q = db.select('users', where="id="+str(id))
 		if len(q) == 0:
 			# insert sess vars
 			sess.id = id
