@@ -1,8 +1,9 @@
-import respond, json
+import responces, json
 from tokens import db
 from error import SendError
+from bot.send import send
 
-def recieve(data):
+def recieve(data, sess):
 	data = json.loads(data)
 	try:
 		data = data['entry']
@@ -11,55 +12,50 @@ def recieve(data):
 		return False
 	#
 	for entry in data:#entry = data[0]
-		try:
-			li = entry['messaging']
-			for info in li:#info = li[0]
-				try:
-					recieveVal(info)
-				except Exception as e:
-					print "recieveVal error,", str(e)
-		except Exception as e:
-			print "Bad entry json.", e
-	#
+		li = entry['messaging']
+		for info in li:#info = li[0]
+			sess, msg = recieveVal(info, sess)
+			# send return to user if str
+			if type(msg) == str:
+				send(sess.id,msg)
+#
 
 
-def recieveVal(info):
+def recieveVal(info, sess):
 	# sort postback from message
 	id = info["sender"]["id"]
 	if "message" in info:
 		message = info["message"]
 
-		if "is_echo" in message and message["is_echo"]:# if is_echo ignore it
-			return False
+		# if is_echo ignore it
+		if "is_echo" in message and message["is_echo"]:
+			return sess, False
 
-		# manage user in database
-		q = db.query("SELECT current_msg FROM users WHERE id="+str(id))
+		# manage users in database
+		q = db.query("SELECT * FROM users WHERE id="+str(id))
 		if len(q) == 0:
-			# new user
-			db.query("INSERT INTO users (id,current_msg) VALUES ("+str(id)+",'start')")
-			current_msg = 'Start'
+			# insert sess vars
+			sess.id = id
+			db.query("INSERT INTO users (id,current_msg) VALUES ("+str(id)+",'Start')")
 		else:
-			current_msg = q[0]['current_msg']
-			current_msg = current_msg[0].upper()+current_msg[1:]# Start from start
+			# set sess vars (without updating database)
+			sess.set_dict(q[0])
 
-		##	send to current message
-		# get respond.py class from name
-		current_class = getattr(respond, current_msg)
-		# call recieve method on message
-		current_class.recieve(id,message)
-		return 'True'
+		#	send to current message
+		send_fn = getattr(responces, sess.current_msg+'_msg')
+		return sess, send_fn(sess, message)
 	#
 	elif "postback" in info:
 		key = info["postback"]["payload"]
 		if key == "GetStarted":
 			# is a new user
-			db.query("DELETE FROM users WHERE id="+str(id))
-			db.query("INSERT INTO users (id,current_msg) VALUES ("+str(id)+",'start')")
+			db.query("DELETE FROM users WHERE id="+str(sess.id))
+			db.query("INSERT INTO users (id,current_msg) VALUES ("+str(sess.id)+",'start')")
 			# set to start and send there
-			respond.Start.recieve(id, 'Get Started')
+			responces.Start_msg(sess, 'Get Started')
 	#
 	elif "read" in info or "delivery" in info:
 		# user has read message
-		return False
+		return sess, False
 	else:
 		raise Exception("input is neither postback or message")

@@ -8,3 +8,4 @@ class SendError:
 		self.jsn = jsn
 	def __str__(self):
 		return str(self.jsn)
+#

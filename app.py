@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
-import web
+
+import web, sys, random
 import bot
-import sys
 
 urls = (
 		'/webhook', 'webhook',
 		'/(.*)', 'empty'
 )
 app = web.application(urls, globals())
+# define Session vars
+session = bot.Session(id=None, current_msg='Start', last_msg_tstamp=0, identity=random.randint(0,241))
 
 class webhook:
 	def GET(self):
@@ -17,7 +18,7 @@ class webhook:
 		print web.data()
 		sys.stdout.flush()
 		#
-		return bot.recieve(web.data())
+		return bot.recieve(web.data(), session)
 
 class empty:
 	def GET(self, name):
