@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import bot
+from chat import Chat_msg
 
 ErrLen_start = "🐧 Not Sent\nMust be under 200 characters."
 def ErrLen_msg(sess,msg):
