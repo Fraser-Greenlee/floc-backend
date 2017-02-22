@@ -36,7 +36,7 @@ def recieveVal(info, sess):
 		if len(q) == 0:
 			# insert sess vars
 			sess.id = id
-			db.query("INSERT INTO users (id,current_msg,last_msg_tstamp) VALUES ("+str(id)+",'Start',0)")
+			db.query("INSERT INTO users (id) VALUES ("+str(id)+")")
 		else:
 			# set sess vars (without updating database)
 			sess.set_dict(q[0])
