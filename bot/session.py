@@ -26,7 +26,7 @@ class Session(dict):
 
 	def update_dict(self, cols):# update values and database
 		# update database values
-		set_vals = " AND ".join([col[0]+'='+format_val(col[1]) for col in cols.items()])
+		set_vals = " AND ".join([col[0]+'='+self.format_val(col[1]) for col in cols.items()])
 		q = db.query("UPDATE users SET "+set_vals+" WHERE id="+str(self.id))
 		# update session values
 		for name, value in cols.items():
