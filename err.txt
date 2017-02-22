@@ -1,0 +1,31 @@
+2017-02-22T17:37:21.249031+00:00 app[web.1]: 10.238.25.185:55455 - - [22/Feb/2017 17:37:21] "HTTP/1.1 POST /webhook" - 200 OK
+2017-02-22T17:37:21.283865+00:00 app[web.1]: Traceback (most recent call last):
+2017-02-22T17:37:21.283869+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/application.py", line 239, in process
+2017-02-22T17:37:21.283870+00:00 app[web.1]:     return self.handle()
+2017-02-22T17:37:21.283871+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/application.py", line 230, in handle
+2017-02-22T17:37:21.283871+00:00 app[web.1]:     return self._delegate(fn, self.fvars, args)
+2017-02-22T17:37:21.283872+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/application.py", line 420, in _delegate
+2017-02-22T17:37:21.283873+00:00 app[web.1]:     return handle_class(cls)
+2017-02-22T17:37:21.283873+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/application.py", line 396, in handle_class
+2017-02-22T17:37:21.283874+00:00 app[web.1]:     return tocall(*args)
+2017-02-22T17:37:21.283874+00:00 app[web.1]:   File "/app/app.py", line 18, in POST
+2017-02-22T17:37:21.283875+00:00 app[web.1]:     print web.data()
+2017-02-22T17:37:21.283876+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/webapi.py", line 341, in data
+2017-02-22T17:37:21.283877+00:00 app[web.1]:     ctx.data = ctx.env['wsgi.input'].read(cl)
+2017-02-22T17:37:21.283877+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/wsgiserver/__init__.py", line 280, in read
+2017-02-22T17:37:21.283878+00:00 app[web.1]:     data = self.rfile.read(size)
+2017-02-22T17:37:21.283879+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/wsgiserver/__init__.py", line 980, in read
+2017-02-22T17:37:21.283879+00:00 app[web.1]:     data = self.recv(left)
+2017-02-22T17:37:21.283880+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/web/wsgiserver/__init__.py", line 933, in recv
+2017-02-22T17:37:21.283881+00:00 app[web.1]:     data = self._sock.recv(size)
+2017-02-22T17:37:21.283881+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/gevent/_socket2.py", line 280, in recv
+2017-02-22T17:37:21.283882+00:00 app[web.1]:     self._wait(self._read_event)
+2017-02-22T17:37:21.283883+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/gevent/_socket2.py", line 179, in _wait
+2017-02-22T17:37:21.283883+00:00 app[web.1]:     self.hub.wait(watcher)
+2017-02-22T17:37:21.283884+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/gevent/hub.py", line 630, in wait
+2017-02-22T17:37:21.283885+00:00 app[web.1]:     result = waiter.get()
+2017-02-22T17:37:21.283886+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/gevent/hub.py", line 878, in get
+2017-02-22T17:37:21.283886+00:00 app[web.1]:     return self.hub.switch()
+2017-02-22T17:37:21.283887+00:00 app[web.1]:   File "/app/.heroku/python/lib/python2.7/site-packages/gevent/hub.py", line 609, in switch
+2017-02-22T17:37:21.283888+00:00 app[web.1]:     return greenlet.switch(self)
+2017-02-22T17:37:21.283888+00:00 app[web.1]: LoopExit: ('This operation would block forever', <Hub at 0x7fb7d008c550 epoll pending=0 ref=0 fileno=5>)

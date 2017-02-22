@@ -98,7 +98,7 @@ def send_msg(sess,msg):
 			db.query("DELETE FROM users WHERE id="+str(sess.id))
 		else:
 			# proper error
-			print "ERROR:", err.jsn
+			print "ERROR:", str(err)
 
 
 ##### MSG FUNCTION

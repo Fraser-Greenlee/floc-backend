@@ -11,4 +11,8 @@ git push -u origin master
 git remote rm heroku
 heroku git:remote -a appname
 
+(
+	secret-messenger, test-bot
+)
+
 webhook: kjhvvjhkvkgCGHgCJHjghcY6i7Cc7tt
