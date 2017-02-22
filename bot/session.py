@@ -6,6 +6,13 @@ class Session(dict):
 		for key, value in cols.items():
 			setattr(self, key, value)
 
+	def format_val(v):
+		@staticmethod
+		if type(v) == str:
+			return "'"+v+"'"
+		else:
+			return str(v)
+
 	def set(self, **cols):# set values NOT updating database
 		for name, value in cols.items():
 			super(Session, self).__setattr__(name, value)
@@ -15,19 +22,16 @@ class Session(dict):
 			super(Session, self).__setattr__(name, value)
 
 	def update(self, **cols):# update values and database
-		# update database values
-		q = db.update('users', cols, where='id='+str(self.id))
-		# update session values
-		for name, value in cols.items():
-			super(Session, self).__setattr__(name, value)
-		# return query
-		return q
+		return self.update(cols)
 
 	def update_dict(self, cols):# update values and database
 		# update database values
-		q = db.update('users', cols, where='id='+str(self.id))
+		set_vals = " AND ".join([col[0]+'='+format_val(col[1]) for col in cols.items()])
+		db.query("UPDATE users SET "+set_vals+" WHERE id="+str(self.id))
+		q = db.update('users', where='id='+str(self.id), cols,)
 		# update session values
 		for name, value in cols.items():
 			super(Session, self).__setattr__(name, value)
 		# return query
 		return q
+#
