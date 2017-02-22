@@ -54,10 +54,8 @@ def emoji_spam(sess,msg):
 				UPDATE users SET identity=new_identity.s
 				FROM new_identity
 				WHERE id=1166543533459050;
-				select identity from users where id=1166543533459050
-				""")[0]['identity']
+				select identity from users where id="""+str(sess.id))[0]['identity']
 		)
-		print sess.identity
 	return sess
 
 
