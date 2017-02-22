@@ -22,7 +22,7 @@ class Session(dict):
 			super(Session, self).__setattr__(name, value)
 
 	def update(self, **cols):# update values and database
-		return self.update(cols)
+		return self.update_dict(cols)
 
 	def update_dict(self, cols):# update values and database
 		# update database values
