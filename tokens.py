@@ -5,7 +5,7 @@ REMOTE_TEST_DB_URL = 'postgres://tatvwdylfhnthu:9aa3223d040c65ef06e9362022004fe9
 
 # database
 
-def urltodb(url):#url = DATABASE_URL
+def urltodb(url):
 	url = url.replace('//','').replace('@',':').split(':')
 	url[-1] = url[-1][url[-1].index('/')+1:]
 	return web.database(dbn=url[0],db=url[4],user=url[1],pw=url[2],host=url[3])
@@ -13,8 +13,8 @@ def urltodb(url):#url = DATABASE_URL
 LOCAL_TEST = False
 
 # if remote test
-DATABASE_URL = os.environ.get('HEROKU_POSTGRESQL_ROSE_URL') is None
-if DATABASE_URL is None:
+REMOTE_TEST = os.environ.get('HEROKU_POSTGRESQL_ROSE_URL') is not None
+if REMOTE_TEST is False:
 	# if live
 	DATABASE_URL = os.environ.get('DATABASE_URL')
 	if DATABASE_URL is None:
@@ -25,7 +25,6 @@ if DATABASE_URL is None:
 		db = urltodb(DATABASE_URL)
 else:
 	db = urltodb(DATABASE_URL)
-	REMOTE_TEST = True
 
 ## list of keys
 webhook = 'kjhvvjhkvkgCGHgCJHjghcY6i7Cc7tt'

@@ -1,5 +1,8 @@
+# ngrokapi
+python ngrokapi/app.py 8888
+
 # ngrok
-./ngrok http -subdomain=fraser -region eu 8080
+./ngrok http -subdomain=fraser -region eu 8888
 
 # bitbucket
 git push -u origin master
