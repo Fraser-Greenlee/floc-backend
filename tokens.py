@@ -13,7 +13,8 @@ def urltodb(url):
 LOCAL_TEST = False
 
 # if remote test
-REMOTE_TEST = os.environ.get('HEROKU_POSTGRESQL_ROSE_URL') is not None
+DATABASE_URL = os.environ.get('HEROKU_POSTGRESQL_ROSE_URL')
+REMOTE_TEST = DATABASE_URL is not None
 if REMOTE_TEST is False:
 	# if live
 	DATABASE_URL = os.environ.get('DATABASE_URL')
