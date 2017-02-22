@@ -1,4 +1,6 @@
 
+from tokens import db
+
 class Session(dict):
 	def __init__(self, **cols):
 		for key, value in cols.items():

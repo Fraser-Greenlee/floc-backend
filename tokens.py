@@ -1,8 +1,6 @@
 import web
 import os
 
-REMOTE_TEST_DB_URL = 'postgres://tatvwdylfhnthu:9aa3223d040c65ef06e9362022004fe9bb5b3e3f44b67ad4101f549fddaa8177@ec2-54-204-1-40.compute-1.amazonaws.com:5432/d8bqtbsqkdmogn'
-
 # database
 
 def urltodb(url):
@@ -31,7 +29,7 @@ else:
 webhook = 'kjhvvjhkvkgCGHgCJHjghcY6i7Cc7tt'
 page = {
 	'Test':'EAAFuDsxVFzwBACGpc5UdzgIZB6CNlGuW1FbuCqYRN7OnXUwRq6KvGyHmP8mGbnqTL2cMHnFkVKj4uFCW6spSGWWFx9IgwenwsXE3iCpqwXbyW3HPewsgVX0sN4AHG5noOTbed4bqHHVgrZAwZCu3kSbd5RolfuWYHrFcdgwJAZDZD',
-	'RemoteTest':'EAAU5ILKtVX8BADykzKRhBdP2lAavUeBK7ZBOepKngyZBsJbZCZB705ynLqru6WTBykj1rE2HupRtJoUo3UlkOduoGKZBzkzfQlFj5Yn8ZC34C2PlL6wIaJAZBncUgaz3LwZANiszUbZCw2jQrsipFvsKCXklvcAMywBpv8ZAJsMXrmuQZDZD',
+	'RemoteTest':'EAAU5ILKtVX8BAEQNJu3s8QcbE5bmw79PVzZAY4yKPkwSZBzihaJLUUe2FmuDPGspBNNBxNJ2auZB9O1IPweSQ4L8ZCiHC8w72ZA6yUdey4LHjSuqglEisgzFFr8sXbaremC9qXn5RRQiAhogJCaFT8YZBOL2gLFWvMLk5ck37m2AZDZD',
 	'Live':'EAAae68efi70BAPQUsusZCkfTm1KMRfETnLU3207hUMI5rywtFeKGe6plb7qpWybhKyVsu306fYC8ZA7fG9p7Mg4qi67KkP2XDqJ8ZAkUDg6ZCTYSDBiRQN8ZC48xcyV8voal8pXMyrg9VIfKtjiSEljYZC3QvsC11ZAwiJ7hXaKRQZDZD'
 }
 
