@@ -1,6 +1,8 @@
 import web
 import os
 
+TESTING = True
+
 # database
 
 def urltodb(url):

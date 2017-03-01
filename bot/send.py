@@ -3,10 +3,16 @@ import grequests, requests, json
 import datetime
 
 # import messagkey from tokens.py file
-from tokens import access_token
+from tokens import access_token, TESTING, LOCAL_TEST
 from error import SendError
 
+if LOCAL_TEST and TESTING:
+	URL = 'http://0.0.0.0:8888/'
+else:
+	URL = 'https://graph.facebook.com/v2.6/me/messages'
+
 def send(id, message):
+	print 'SENDING:', message
 	if type(message) == str:
 		message = {'text':unicode(message, 'utf-8')}
 	if type(id) == list:
@@ -24,7 +30,7 @@ def sendSingle(id, message):
 		'notification_type': 'NO_PUSH'
 	}
 	r = requests.post(
-		'https://graph.facebook.com/v2.6/me/messages',
+		URL,
 		params = { 'access_token': access_token },
 		json=messageData
 	)
@@ -36,7 +42,7 @@ def sendList(idlist, message):#idlist, message = [[1166543533459050L],{'text':'h
 	# make params for each request
 	messageDataList = [{'recipient': {'id': id}, 'message': message, 'notification_type': 'NO_PUSH'} for id in idlist]
 	# make request list
-	rs = (grequests.post('https://graph.facebook.com/v2.6/me/messages', params = {'access_token':access_token}, json=messageData) for messageData in messageDataList)
+	rs = (grequests.post(URL, params = {'access_token':access_token}, json=messageData) for messageData in messageDataList)
 	# send all simultaneously
 	start = datetime.datetime.now()
 	resps = grequests.map(rs)

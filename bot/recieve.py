@@ -24,6 +24,7 @@ def recieve(data, sess):
 def recieveVal(info, sess):
 	# sort postback from message
 	id = info["sender"]["id"]
+	print 'ID:', id
 	if "message" in info:
 		message = info["message"]
 
@@ -34,9 +35,7 @@ def recieveVal(info, sess):
 		# manage users in database
 		q = db.select('users', where="id="+str(id))
 		if len(q) == 0:
-			# insert sess vars
-			sess.id = id
-			db.query("INSERT INTO users (id) VALUES ("+str(id)+")")
+			return new_user(sess,id)
 		else:
 			# set sess vars (without updating database)
 			sess.set_dict(q[0])
@@ -45,17 +44,17 @@ def recieveVal(info, sess):
 		send_fn = getattr(responces, sess.current_msg+'_msg')
 		return sess, send_fn(sess, message)
 	#
-	elif "postback" in info:
-		key = info["postback"]["payload"]
-		if key == "GetStarted":
-			# is a new user
-			db.query("DELETE FROM users WHERE id="+str(sess.id))
-			db.query("INSERT INTO users (id,current_msg) VALUES ("+str(sess.id)+",'start')")
-			# set to start and send there
-			responces.Start_msg(sess, 'Get Started')
+	elif "postback" in info and info["postback"]["payload"] == "GetStarted":
+		return new_user(sess,id)
 	#
 	elif "read" in info or "delivery" in info:
 		# user has read message
 		return sess, False
 	else:
 		raise Exception("input is neither postback or message")
+
+def new_user(sess,id):
+	sess.id = id
+	db.query("DELETE FROM users WHERE id="+str(sess.id))
+	db.query("INSERT INTO users (id) VALUES ("+str(sess.id)+")")
+	return sess, responces.Start_msg(sess, "x")
