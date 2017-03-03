@@ -95,7 +95,8 @@ def send_msg(sess,msg):
 		print err
 		if err['code'] == 200:
 			# user has left, delete user from database
-			db.query("DELETE FROM users WHERE id="+str(sess.id))
+			#db.query("DELETE FROM users WHERE id="+str())
+			print 'nothing'
 		else:
 			# proper error
 			print "ERROR:", str(err)
