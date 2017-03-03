@@ -1,4 +1,4 @@
-import os, shutil
+import os, shutil, time
 from user import User
 from recieve import recieve
 
@@ -35,3 +35,6 @@ def results(ress):
 					print 'FAILED: Expected', res[1], ' Got:', res[2]
 				else:
 					print res[1]
+
+def timestamp():
+	return int(time.time())*10**3

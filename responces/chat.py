@@ -34,7 +34,7 @@ def mid_to_tstamp(mid):#mid = "mid.1486498717604:38098ec617"
 	return int(mid[4:mid.index(':')])
 
 
-def emoji_spam(sess,msg):
+def time_check(sess,msg):
 	dff = mid_to_tstamp(msg['mid']) - sess.last_msg_tstamp
 	if dff < 200:# is spam
 		return False
@@ -53,7 +53,7 @@ def emoji_spam(sess,msg):
 				)
 				UPDATE users SET identity=new_identity.s
 				FROM new_identity
-				WHERE id=1166543533459050;
+				WHERE id="""+str(sess.id)+""";
 				select identity from users where id="""+str(sess.id))[0]['identity']
 		)
 	return sess
@@ -106,7 +106,7 @@ def send_msg(sess,msg):
 
 def Chat_msg(sess,msg):
 	# set emoji and stop spam
-	sess = emoji_spam(sess, msg)
+	sess = time_check(sess, msg)
 	if sess is False:
 		return False
 	db.query("UPDATE users SET last_msg_tstamp="+str(mid_to_tstamp(msg['mid']))+" WHERE id="+str(sess.id))

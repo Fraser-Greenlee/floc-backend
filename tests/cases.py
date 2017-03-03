@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import web, time
+import web
 import testbot
 
 testbot.send_to = 'http://0.0.0.0:8080/webhook'
@@ -13,11 +13,16 @@ def run():
 	clear_tables()
 	#
 	users = get_users()
+	results.append(new_identity(users))
+	clear_tables()
+	#
+	users = get_users()
 	#
 	results += send_msg(users)
 	results += error_handles(users)
 	#
 	testbot.results(results)
+	clear_tables()
 
 ## Tools
 
@@ -49,6 +54,19 @@ def new_user():
 	user.postback("GetStarted")
 	return user.did_receive("🐧 Welcome to Floc.\nA place for anonymous group chats on Messenger.")
 
+# Updating identity
+
+def new_identity(users):
+	users[0].send('x')
+	l = users[1].last_msg()['message']['text']
+	current_emoji = l[:l.index(' ')]
+	#
+	users[0].time_offset = 600001
+	users[0].send('x')
+	l = users[1].last_msg()['message']['text']
+	new_emoji = l[:l.index(' ')]
+	return testbot.test(current_emoji != new_emoji, "Emoji changes", "No emoji change.")
+
 # sending messages
 
 def send_msg(users):
@@ -59,7 +77,6 @@ def send_msg(users):
 
 def text_to_all(users,msg):
 	users[0].send(msg)
-	time.sleep(1)
 	r = []
 	for u in users[1:]:
 		r.append(last_msg(u, msg))
@@ -70,7 +87,6 @@ def text_to_all(users,msg):
 
 def attachment_to_all(users,attachment):
 	users[0].send(attachment)
-	time.sleep(1)
 	r = []
 	for u in users[1:]:
 		r.append(u.did_receive(attachment))

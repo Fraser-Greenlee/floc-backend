@@ -56,5 +56,15 @@ def recieveVal(info, sess):
 def new_user(sess,id):
 	sess.id = id
 	db.query("DELETE FROM users WHERE id="+str(sess.id))
-	db.query("INSERT INTO users (id) VALUES ("+str(sess.id)+")")
+
+	# find new identity value
+	identity = db.query("""
+		SELECT s
+			FROM generate_series(1, 241) s
+			LEFT JOIN users ON s.s = identity
+		 WHERE id IS NULL
+		 order by random() limit 1
+	""")[0]['s']
+
+	db.query("INSERT INTO users (id,identity) VALUES ("+str(sess.id)+","+str(identity)+")")
 	return sess, responces.Start_msg(sess, "x")

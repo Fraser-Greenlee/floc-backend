@@ -14,14 +14,11 @@ def new_json_file(id):
 def random_id():
 	return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
 
-def timestamp():
-	return int(time.time()*(10**6))
-
-
 class User:
 	def __init__(self,*id):
 		if not exists('messages/'):
 			makedirs('messages/')
+		self.time_offset = 0
 		if len(id) is 0:
 			# random new id
 			users = getusers()
@@ -38,6 +35,9 @@ class User:
 			if id not in getusers():
 				print 'y', id
 				new_json_file(id)
+
+	def time(self):
+		return testbot.timestamp() + self.time_offset
 
 	def read(self):
 		return json.load(open('messages/'+str(self.id)+'.json','r'))
@@ -88,6 +88,7 @@ class User:
 			return [True, str(msg).replace('\n',' \ ')]
 
 	def postback(self,key):
+		time.sleep(1)
 		requests.post(
 			testbot.send_to,
 			json={
@@ -95,7 +96,7 @@ class User:
 				"entry":[
 					{
 						"id": testbot.page_id,
-						"time":timestamp(),
+						"time":self.time(),
 						"messaging":[
 							{
 								"sender":{
@@ -104,7 +105,7 @@ class User:
 								"recipient":{
 									"id": testbot.page_id
 								},
-								"timestamp":timestamp(),
+								"timestamp":self.time(),
 							  "postback":{
 							    "payload":key
 							  }
@@ -116,6 +117,7 @@ class User:
 	#
 
 	def send(self,data):
+		time.sleep(1)
 		if type(data) == str:
 			requests.post(
 				testbot.send_to,
@@ -124,7 +126,7 @@ class User:
 				  "entry":[
 				    {
 				      "id": testbot.page_id,
-				      "time":timestamp(),
+				      "time":self.time(),
 				      "messaging":[
 				        {
 				          "sender":{
@@ -133,9 +135,9 @@ class User:
 				          "recipient":{
 				            "id": testbot.page_id
 				          },
-									"timestamp":timestamp(),
+									"timestamp":self.time(),
 								  "message":{
-								    "mid":"mid."+str(timestamp())+":"+random_id(),
+								    "mid":"mid."+str(self.time())+":"+random_id(),
 								    "text":data
 									}
 				        }
@@ -151,7 +153,7 @@ class User:
 				  "entry":[
 				    {
 				      "id": testbot.page_id,
-				      "time":timestamp(),
+				      "time":self.time(),
 				      "messaging":[
 				        {
 				          "sender":{
@@ -160,9 +162,9 @@ class User:
 				          "recipient":{
 				            "id": testbot.page_id
 				          },
-									"timestamp":timestamp(),
+									"timestamp":self.time(),
 								  "message":{
-								    "mid":"mid."+str(timestamp())+":"+random_id(),
+								    "mid":"mid."+str(self.time())+":"+random_id(),
 							        "attachments":[
 																      {
 																        "type":data['type'],
