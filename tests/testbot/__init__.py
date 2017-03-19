@@ -6,6 +6,10 @@ from recieve import recieve
 send_to = 'http://0.0.0.0:8080/webhook'
 page_id = 1
 
+STOP_ON_FAIL = True
+print 'STOP_ON_FAIL:', STOP_ON_FAIL
+resultlist = []
+
 # tools
 def equals(got, expected):
 	if expected == got:
@@ -23,11 +27,19 @@ def clear_messages():
 	if os.path.exists('messages'):
 		shutil.rmtree('messages')
 
-def results(ress):
+def addresult(res):
+	resultlist.append(res)
+	if res[0] is False and STOP_ON_FAIL:
+		results()
+		raise Exception('STOP ON FAIL')
+	else:
+		return res[0]
+
+def results():
 		print ''
 		print 'RESULTS'
 		print '-------'
-		for res in ress:
+		for res in resultlist:
 			if res[0]:
 				print 'PASSED:', res[1]
 			else:

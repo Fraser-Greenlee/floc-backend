@@ -1,6 +1,5 @@
 import responces, json
-from tokens import db
-from error import SendError
+from tokens import db, TESTING, LOCAL_TEST
 from bot.send import send
 
 def recieve(data, sess):
@@ -14,17 +13,31 @@ def recieve(data, sess):
 	for entry in data:#entry = data[0]
 		li = entry['messaging']
 		for info in li:#info = li[0]
-			sess, msg = recieveVal(info, sess)
-			# send return to user if str
-			if type(msg) == str:
-				send(sess.id,msg)
+			v = recieveVal(info, sess)
+			if v not in [None,False]:
+				sess, msg = v
+				# send return to user if str
+				if type(msg) in [str,unicode]:
+					send(sess.id,msg)
 #
 
 
 def recieveVal(info, sess):
 	# sort postback from message
 	id = info["sender"]["id"]
-	print 'ID:', id
+	# Check not from past
+	if 'timestamp' in info:
+		q = db.query("SELECT last_time from users where id="+str(id))
+		if len(q) > 0:
+			if q[0]['last_time'] >= info['timestamp']:
+				if LOCAL_TEST:
+					print '* PAST *'
+					print info
+					print '* ---- *'
+				return False
+			else:
+				db.update('users',where="id="+str(id),last_time=info['timestamp'])
+	#
 	if "message" in info:
 		message = info["message"]
 
@@ -38,11 +51,27 @@ def recieveVal(info, sess):
 			return new_user(sess,id)
 		else:
 			# set sess vars (without updating database)
-			sess.set_dict(q[0])
+			r = q[0]
+			sess.set_dict(r)
+			if r['location'] is not None:
+				sess.set(
+					lat=float(r['location'][1:r['location'].index(',')]),
+					long=float(r['location'][r['location'].index(',')+1:-1])
+				)
+
+		# if quick reply send to payload as function
+		if 'quick_reply' in message:
+			payload = message['quick_reply']['payload']
+			if ':' in payload:
+				l = payload.split(':')
+				fn_name, args = l[0], l[1:]
+				return getattr(responces, fn_name)(sess, args)
+			else:
+				return getattr(responces, payload)(sess)
 
 		#	send to current message
 		send_fn = getattr(responces, sess.current_msg+'_msg')
-		return sess, send_fn(sess, message)
+		return send_fn(sess, message)
 	#
 	elif "postback" in info and info["postback"]["payload"] == "GetStarted":
 		return new_user(sess,id)
@@ -55,16 +84,7 @@ def recieveVal(info, sess):
 
 def new_user(sess,id):
 	sess.id = id
-	db.query("DELETE FROM users WHERE id="+str(sess.id))
-
-	# find new identity value
-	identity = db.query("""
-		SELECT s
-			FROM generate_series(1, 241) s
-			LEFT JOIN users ON s.s = identity
-		 WHERE id IS NULL
-		 order by random() limit 1
-	""")[0]['s']
-
-	db.query("INSERT INTO users (id,identity) VALUES ("+str(sess.id)+","+str(identity)+")")
-	return sess, responces.Start_msg(sess, "x")
+	db.delete('users',where='id='+str(sess.id))
+	db.insert('users',id=sess.id)
+	sess.new_user = True
+	return responces.Start_msg(sess, "x")

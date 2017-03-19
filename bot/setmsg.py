@@ -5,4 +5,4 @@ def setmsg(sess, new_msg):
 	sess.update(current_msg=new_msg)
 	# return _start variable if present
 	if hasattr(responces, new_msg+'_start'):
-		return getattr(responces, new_msg+'_start')
+		return sess, getattr(responces, new_msg+'_start')

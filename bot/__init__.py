@@ -3,5 +3,4 @@ from send import send
 from verify import verify
 from setmsg import setmsg
 from greetings import Getstarted, Greeting
-from error import SendError
 from session import Session

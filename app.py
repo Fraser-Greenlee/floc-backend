@@ -9,7 +9,7 @@ urls = (
 app = web.application(urls, globals())
 
 # define Session vars
-session = bot.Session(id=None, current_msg='Start', last_msg_tstamp=0, identity=None)
+session = bot.Session(id=None, current_msg='Start', location=0, lat=0, long=0, open_group=0, recieve_messages=True, temp_group_id=0, group_name='', last_sent=0, identity=0, quick_replies='')
 
 class webhook:
 	def GET(self):

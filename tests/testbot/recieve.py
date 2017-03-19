@@ -1,6 +1,7 @@
 import json
 
 def recieve(web_data):
+	print 'recieving...'
 	jsn = json.loads(web_data)
 	# test message structure
 	try:
@@ -11,9 +12,12 @@ def recieve(web_data):
 			if 'attachment' in msg:
 				attachment = msg['attachment']
 				if attachment['type'] not in ['image','audio','video','file']:
-					raise Exception()
+					raise Exception('weird type '+str(attachment['type']))
 				if 'payload' not in attachment:
 					return 'Error: no payload in attachment'
+		elif 'quick_replies' in msg:
+			if len(msg['quick_replies']) == 0:
+				raise Exception('Too few quick_replies')
 	except Exception as e:
 		print 'Recieve Error: '+str(e)
 		return 'Error: message structure. '+str(jsn)
