@@ -22,7 +22,7 @@ class webhook:
 
 class empty:
 	def GET(self, name):
-		return 'nothing to see here'
+		return open('webpage/index.html','r').read()
 
 if __name__ == "__main__":
 	app.run()
