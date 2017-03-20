@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-import bot, random, re, web
+import bot, random, re, web, time
 from emojis import emojis
 from tokens import db, TESTING, LOCAL_TEST
 
@@ -201,7 +201,8 @@ def Chat_msg(sess,msg):
 	#
 	# TODO Check for message error
 	#
-	timedff = mid_to_tstamp(msg['mid']) - sess.last_sent
+	msg_tstamp = mid_to_tstamp(msg['mid'])
+	timedff = msg_tstamp - sess.last_sent
 	if timedff < 200:
 		print 'SPAM'
 		if TESTING:
@@ -211,7 +212,7 @@ def Chat_msg(sess,msg):
 	in_temp = sess.open_group == 0
 	if in_temp:
 		if sess.temp_group_id == 0 or timedff > 600000:
-			sess = joinmake_temp_group(sess,mid_to_tstamp(msg['mid']))
+			sess = joinmake_temp_group(sess,msg_tstamp)
 		sess.status_bar = select_group(sess)
 	else:
 		if timedff > 600000:
@@ -230,6 +231,15 @@ def Chat_msg(sess,msg):
 	# Send Message
 	if in_temp:
 		sess = temp_group_msg(sess,msg)
+		db.query("UPDATE temp_groups SET last_msg="+str(msg_tstamp)+" WHERE id="+str(sess.temp_group_id))
 	else:
 		sess = group_msg(sess,msg)
-	bot.send(sess.id,"Sent",suggest=sess.status_bar)
+		db.query("UPDATE groups SET last_msg="+str(msg_tstamp)+" WHERE id="+str(sess.open_group))
+	sess.update(last_sent=mid_to_tstamp(msg['mid']))
+	# Give autofill if no message back quickly
+	time.sleep(1.5)
+	if (
+			in_temp and msg_tstamp >= db.query("SELECT last_msg from temp_groups where id="+str(sess.temp_group_id))[0]['last_msg']
+			or msg_tstamp >= db.query("SELECT last_msg from groups where id="+str(sess.open_group))[0]['last_msg']
+		):
+		bot.send(sess.id,"Sent",suggest=sess.status_bar)

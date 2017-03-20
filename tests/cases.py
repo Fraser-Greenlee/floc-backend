@@ -38,7 +38,6 @@ def clear_tables():
 	global userI
 	userI = 1
 	db.query("delete from users")
-	db.query("delete from messages")
 	db.query("delete from groups")
 	db.query("delete from group_users")
 	db.query("delete from temp_groups")
@@ -166,16 +165,16 @@ def base_groups(user):
 
 def joinleave_group(user):
 	user.quick_reply('#cs2')
-	user.did_receive("Joined #cs2", suggest=['<','pin #cs2'])
-	user.quick_reply('<')
+	user.did_receive("Joined #cs2", suggest=['leave #cs2'])
+	user.quick_reply('leave #cs2')
 	user.did_receive("Left group")
 
 def makeleave_group(user):
 	user.send('#frisbae')
 	user.did_receive("Make group #frisbae?", suggest=['Yes','No'])
 	user.quick_reply('Yes')
-	user.did_receive("Joined #frisbae", suggest=['<','pin #frisbae'])
-	user.quick_reply('<')
+	user.did_receive("Joined #frisbae", suggest=['leave #frisbae'])
+	user.quick_reply('leave #frisbae')
 	user.did_receive("Left group")
 
 # error checking
