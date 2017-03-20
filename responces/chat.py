@@ -235,7 +235,7 @@ def Chat_msg(sess,msg):
 	else:
 		sess = group_msg(sess,msg)
 		db.query("UPDATE groups SET last_msg="+str(msg_tstamp)+" WHERE id="+str(sess.open_group))
-	sess.update(last_sent=mid_to_tstamp(msg['mid']))
+	sess.update(last_sent=msg_tstamp)
 	# Give autofill if no message back quickly
 	time.sleep(1.5)
 	if (
