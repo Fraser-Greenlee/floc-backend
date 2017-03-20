@@ -57,13 +57,10 @@ def sendSingle(id, messages):
 			json=messageData
 		)
 		if r.status_code != 200:
-			if u'error_subcode' in str(json.loads(r._content)['error']):
-				db.delete('users',where='id='+str(sess.id))
+			if LOCAL_TEST or TESTING:
+				raise Exception(str(json.loads(r._content)))
 			else:
-				if LOCAL_TEST and TESTING:
-					raise r._content
-				else:
-					raise Exception(str(json.loads(r._content)['error']))
+				print json.loads(r._content)
 
 def load_quick_reply(qr):
 	return json.loads(qr.replace("''","'").replace("u'","'").replace("'",'"'))
