@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-import bot, random, re, web, time
+import bot, random, re, web, time, json
 from emojis import emojis
 from tokens import db, TESTING, LOCAL_TEST
 
@@ -156,18 +156,13 @@ def group_msg(sess,msg):
 	elif 'mid' in msg and 'seq' in msg:
 		del msg['mid']
 		del msg['seq']
-	idlist =  [r['id'] for r in db.query("SELECT id FROM users WHERE recieve_messages=true and open_group="+str(sess.open_group)+" AND id<>"+str(sess.id))]
+	ids =  [r['id'] for r in db.query("SELECT id FROM users WHERE recieve_messages=true and open_group="+str(sess.open_group)+" AND id<>"+str(sess.id))]
 	s = in_group_suggestions(sess.group_name,sess.open_group)
 	if 'attachments' in msg:
-		errors = bot.send(idlist, emojis[sess.identity], msg, suggest=s)
+		responces = bot.send(ids, emojis[sess.identity], msg, suggest=s)
 	else:
-		errors = bot.send(idlist, emojis[sess.identity]+u' '+unicode(msg['text']), suggest=s)
-	if LOCAL_TEST:
-		for err in errors:
-			if err['code'] == 200:
-				print 'ERROR: user has deleted?'
-			else:
-				print "ERROR:", str(err)
+		responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), suggest=s)
+	send_responces(responces,ids)
 	return sess
 
 def temp_group_msg(sess,msg):
@@ -184,16 +179,25 @@ def temp_group_msg(sess,msg):
 		suggests.append(r['quick_replies'])
 	#
 	if 'attachments' in msg:
-		errors = bot.send(ids, emojis[sess.identity], msg, suggests=suggests)
+		responces = bot.send(ids, emojis[sess.identity], msg, suggests=suggests)
 	else:
-		errors = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), suggests=suggests)
-	if LOCAL_TEST:
-		for err in errors:
-			if err['code'] == 200:
-				print 'ERROR: user has deleted?'
-			else:
-				print "ERROR:", str(err)
+		responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), suggests=suggests)
+	send_responces(responces,ids)
+	#
 	return sess
+
+def send_responces(responces,ids):
+	i=0
+	for resp in responces:
+		if resp.status_code != 200:
+			j = json.loads(resp._content)
+			if 'error' in j and 'code' in j['error'] and j['error']['code'] == 200 and 'error_subcode' in j['error'] and j['error']['error_subcode'] == 1545041:
+				# user has quit chat, delete them
+				print 'User', ids[i], 'quit Floc'
+				db.query("DELETE FROM users where id="+str(ids[i])+";"+"DELETE from group_users where user_id="+str(ids[i]))
+			else:
+				print "ERROR:", str(j)
+		i+=1
 
 ##### MSG FUNCTION
 

@@ -96,10 +96,5 @@ def sendList(idlist, messages, suggests):#idlist, message = [[1166543533459050L]
 	print """
 		Time to send:, """+str(datetime.datetime.now() - start)+"""
 	"""
-	# return errors in list
-	errors = []
-	for r in resps:
-		if r.status_code != 200:
-			print 'Send Error:', json.loads(r._content)['error']
-			errors.append(json.loads(r._content)['error'])
-	return errors
+	# return responces in list
+	return resps

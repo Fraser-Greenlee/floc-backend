@@ -4,7 +4,7 @@ import bot
 
 urls = (
 		'/webhook', 'webhook',
-		'/(.*)', 'empty'
+		'/', 'empty'
 )
 app = web.application(urls, globals())
 
@@ -19,8 +19,8 @@ class webhook:
 		return r
 
 class empty:
-	def GET(self, name):
-		return open('webpage/index.html','r').read()
+	def GET(self):
+		return 'nothing'
 
 if __name__ == "__main__":
 	app.run()
