@@ -39,9 +39,13 @@ def select_group(sess):
 
 def active(sess):
 	if sess.open_group != 0:
-		return u''.join([emojis[r['identity']] for r in db.query("SELECT identity from users where open_group="+str(sess.open_group)+" and id<>"+str(sess.id))])
+		r = u''.join([emojis[r['identity']] for r in db.query("SELECT identity from users where open_group="+str(sess.open_group)+" and id<>"+str(sess.id))])
 	elif sess.temp_group_id:
-		return u''.join([emojis[r['identity']] for r in db.query("SELECT identity from users where temp_group_id="+str(sess.temp_group_id)+" and id<>"+str(sess.id))])
+		r = u''.join([emojis[r['identity']] for r in db.query("SELECT identity from users where open_group=0 and temp_group_id="+str(sess.temp_group_id)+" and id<>"+str(sess.id))])
+	if len(r) == 0:
+		return 'empty'
+	else:
+		return r
 
 def reset(sess):
 	if sess.open_group != 0:

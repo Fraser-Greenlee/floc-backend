@@ -3,19 +3,17 @@ import web, time
 import testbot
 from emojis import emojis
 
-testbot.send_to = 'http://0.0.0.0:8080/webhook'
+testbot.send_to = 'http://0.0.0.0:5000/webhook'
 db = web.database(dbn='postgres',db='secret',user='postgres',pw='',host='localhost')
 
 userI = 1
 
 def run():
-	'''
 	clear_tables()
 	addgroups()
 	#
 	new_user()
 	#
-	'''
 	clear_tables()
 	addgroups()
 	#

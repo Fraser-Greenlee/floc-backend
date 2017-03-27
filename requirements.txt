@@ -1,6 +1,11 @@
-web.py==0.37
-wsgiref==0.1.2
-requests==2.10.0
-psycopg2==2.6.1
-grequests==0.3.0
+# Server
+Flask==0.12
 gevent==1.1.2
+gunicorn==19.4.5
+
+# Manage db
+web.py==0.37
+
+# Requests
+requests==2.10.0
+grequests==0.3.0

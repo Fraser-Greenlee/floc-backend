@@ -1,7 +1,7 @@
 import web
 import os
 
-TESTING = False
+TESTING = True
 
 # database
 

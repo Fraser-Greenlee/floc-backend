@@ -22,7 +22,7 @@ def recieve(data, sess):
 #
 
 
-def recieveVal(info, sess):
+def recieveVal(messaging, sess):
 	# sort postback from message
 	id = info["sender"]["id"]
 	# Check not from past
@@ -37,14 +37,11 @@ def recieveVal(info, sess):
 				return False
 			else:
 				db.update('users',where="id="+str(id),last_time=info['timestamp'])
-	#
-	if "message" in info:
-		message = info["message"]
-
+		#
 		# if is_echo ignore it
-		if "is_echo" in message and message["is_echo"]:
+		if "is_echo" in messaging and messaging['message']["is_echo"]:
 			return sess, False
-
+		#
 		# manage users in database
 		q = db.select('users', where="id="+str(id))
 		if len(q) == 0:
@@ -60,8 +57,8 @@ def recieveVal(info, sess):
 				)
 
 		# if quick reply send to payload as function
-		if 'quick_reply' in message:
-			payload = message['quick_reply']['payload']
+		if 'quick_reply' in messaging['message']:
+			payload = messaging['message']['quick_reply']['payload']
 			if ':' in payload:
 				l = payload.split(':')
 				fn_name, args = l[0], l[1:]
@@ -71,7 +68,7 @@ def recieveVal(info, sess):
 
 		#	send to current message
 		send_fn = getattr(responces, sess.current_msg+'_msg')
-		return send_fn(sess, message)
+		return send_fn(sess, messaging)
 	#
 	elif "postback" in info and info["postback"]["payload"] == "GetStarted":
 		return new_user(sess,id)

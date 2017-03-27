@@ -16,6 +16,12 @@ def new_json_file(id):
 def random_id():
 	return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
 
+def mid(self):
+	return "mid." + random.choice([
+		'$'+''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase) for _ in range(29)),
+		str(self.time())+":"+random_id()
+	])
+
 class User:
 	def __init__(self,*id):
 		if not exists('messages/'):
@@ -147,7 +153,7 @@ class User:
 									  },
 									  "timestamp":self.time(),
 									  "message": {
-									    "mid":"mid."+str(self.time())+":"+random_id(),
+									    "mid" : mid(self),
 									    "text": reply['title'],
 									    "quick_reply": {
 									      "payload": reply['payload']
@@ -214,7 +220,7 @@ class User:
 								},
 								"timestamp":self.time(),
 								"message":{
-									"mid":"mid."+str(self.time())+":"+random_id(),
+									"mid":mid(self),
 									"attachments":[
 										{
 											"title":"$name location",
@@ -257,7 +263,7 @@ class User:
 									},
 									"timestamp":self.time(),
 									"message":{
-										"mid":"mid."+str(self.time())+":"+random_id(),
+										"mid":mid(self),
 										"text":data
 									}
 								}
@@ -284,7 +290,7 @@ class User:
 									},
 									"timestamp":self.time(),
 									"message":{
-										"mid":"mid."+str(self.time())+":"+random_id(),
+										"mid":mid(self),
 											"attachments":[
 																			{
 																				"type":data['type'],
