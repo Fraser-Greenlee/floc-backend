@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import web, bot
 from tokens import db
-from chat import set_group_identity, in_group_suggestions, select_group, group_msg
+from chat import set_group_identity, in_group_suggestions, select_group, group_msg, joinmake_temp_group
 
 def make_group_actually(sess,name):
 	name = name[0]
@@ -15,6 +15,7 @@ def dont_make_group(sess):
 
 def leave_group(sess):
 	sess.update(open_group=0)
+	sess = joinmake_temp_group(sess,sess.last_time)
 	bot.send(sess.id, u"Left group", suggest=select_group(sess))
 
 def open_group(sess,namegroup_id):

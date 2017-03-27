@@ -50,7 +50,6 @@ def sendSingle(id, messages):
 			'message': message,
 			'notification_type': 'NO_PUSH'
 		}
-		print 'messageData', messageData
 		r = requests.post(
 			URL,
 			params = { 'access_token': access_token },
@@ -62,29 +61,25 @@ def sendSingle(id, messages):
 			else:
 				print json.loads(r._content)
 
-def load_quick_reply(qr):
-	return json.loads(qr.replace("''","'").replace("u'","'").replace("'",'"'))
-
 def sendList(idlist, messages, suggests):#idlist, message = [[1166543533459050L],{'text':'hello'}]
 	# make params for each request
 	messageDataList = []
 	i = 0
 	for id in idlist:
 		if suggests != []:
-			print suggests, i
 			# suggestions
 			if suggests[i] is not None:
+				print 'suggests[i]', suggests[i]
 				messages[-1]['quick_replies'] = [
 					{
 		        "content_type":"text",
 		        "title":reply[0],
 		        "payload":reply[1]
 					}
-					for reply in load_quick_reply(suggests[i])
+					for reply in suggests[i]
 				]
 			i += 1
 		messageDataList += [{'recipient': {'id': id}, 'message': message, 'notification_type': 'NO_PUSH'} for message in messages]
-	print 'messageDataList', messageDataList
 	# make request list
 	rs = (grequests.post(URL, params = {'access_token':access_token}, json=messageData) for messageData in messageDataList)
 	# send all simultaneously

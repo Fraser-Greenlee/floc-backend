@@ -4,8 +4,6 @@
 # bitbucket
 git push -u origin master
 
-webhook: kjhvvjhkvkgCGHgCJHjghcY6i7Cc7tt
-
 --
 
 User IDs

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import bot
-from chat import Chat_msg, select_group, joinmake_temp_group, mid_to_tstamp
+from chat import Chat_msg, select_group, joinmake_temp_group
 from quick_replies import *
 
 def Start_msg(sess, msg):
@@ -9,12 +9,14 @@ def Start_msg(sess, msg):
 	bot.setmsg(sess, 'Location')
 
 def Location_msg(sess, msg):
-	if 'attachments' not in msg or 'coordinates' not in msg['attachments'][0]['payload']:
+	print 'Location Message'
+	if 'attachments' not in msg['message'] or 'coordinates' not in msg['message']['attachments'][0]['payload']:
+		print 'non location'
 		bot.send(sess.id, "We need your location so we can see who's nearby.", suggest='$location')
 		return False
 	sess.update(current_msg='Chat')
 	# save location
-	coords = msg['attachments'][0]['payload']['coordinates']
+	coords = msg['message']['attachments'][0]['payload']['coordinates']
 	# Take Longitude/2 so scales equally to lattitude
 	sess.update(location='$point('+str([coords['lat'],coords['long']/2])[1:-1]+')')# $ to stop quotes round str value
 	sess.set(lat=coords['lat'],long=coords['long']/2)
@@ -25,4 +27,4 @@ def Location_msg(sess, msg):
 		bot.send(sess.id, "Done!\nYou can join chat groups from the #Groups below and chat with people nearby.", suggest=sug)
 	else:
 		bot.send(sess.id, "Done!\nYou can make chat groups by entering '#my-group-name' below and chat with people nearby.", suggest=sug)
-	joinmake_temp_group(sess, mid_to_tstamp(msg['mid']))
+	joinmake_temp_group(sess, msg['timestamp'])

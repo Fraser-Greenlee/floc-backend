@@ -272,37 +272,38 @@ class User:
 					]
 				})
 		else:
-			requests.post(
-				testbot.send_to,
-				json={
-					"object":"page",
-					"entry":[
-						{
-							"id": testbot.page_id,
-							"time":self.time(),
-							"messaging":[
-								{
-									"sender":{
-										"id":self.id
-									},
-									"recipient":{
-										"id": testbot.page_id
-									},
-									"timestamp":self.time(),
-									"message":{
-										"mid":mid(self),
-											"attachments":[
-																			{
-																				"type":data['type'],
-																				"payload":{
-																					"url":data['payload']['url']
-																				}
+			jsn = {
+				"object":"page",
+				"entry":[
+					{
+						"id": testbot.page_id,
+						"time":self.time(),
+						"messaging":[
+							{
+								"sender":{
+									"id":self.id
+								},
+								"recipient":{
+									"id": testbot.page_id
+								},
+								"timestamp":self.time(),
+								"message":{
+									"mid":mid(self),
+										"attachments":[
+																		{
+																			"type":data['type'],
+																			"payload":{
+																				"url":data['payload']['url']
 																			}
-																		]
-									}
+																		}
+																	]
 								}
-							]
-						}
-					]
-				})
+							}
+						]
+					}
+				]
+			}
+			if 'text' in data:
+				jsn['entry'][0]['messaging'][0]['message']['text'] = data['text']
+			requests.post( testbot.send_to, json=jsn )
 #

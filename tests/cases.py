@@ -158,14 +158,14 @@ def send_recieve_groups(group_id,users):
 # Making/Join/Leave Groups
 
 def base_groups(user):
-	makeleave_group(user)
 	joinleave_group(user)
+	makeleave_group(user)
 
 def joinleave_group(user):
 	user.quick_reply('#cs2')
 	user.did_receive("Joined #cs2", suggest=['leave #cs2'])
 	user.quick_reply('leave #cs2')
-	user.did_receive("Left group")
+	user.did_receive("Left group", suggest=['#cs2','#indieHackers','#maths2'])
 
 def makeleave_group(user):
 	user.send('#frisbae')
@@ -173,7 +173,7 @@ def makeleave_group(user):
 	user.quick_reply('Yes')
 	user.did_receive("Joined #frisbae", suggest=['leave #frisbae'])
 	user.quick_reply('leave #frisbae')
-	user.did_receive("Left group")
+	user.did_receive("Left group", suggest=['#cs2','#indieHackers','#maths2','#frisbae'])
 
 # error checking
 

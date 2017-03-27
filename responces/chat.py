@@ -4,11 +4,6 @@ import bot, random, re, web, time, json
 from emojis import emojis
 from tokens import db, TESTING, LOCAL_TEST
 
-##### FUNCTIONS
-
-def mid_to_tstamp(mid):#mid = "mid.1486498717604:38098ec617"
-	return int(mid[4:mid.index(':')])
-
 ## Status Bar
 
 def select_group(sess):
@@ -152,48 +147,75 @@ def joinmake_temp_group(sess,temp_last_active):
 ##
 
 def group_msg(sess,msg):
-	print 'GROUP MSG', msg
+	if LOCAL_TEST:
+		print 'GROUP MSG', msg
+	#
 	if type(msg) == str:
 		msg = unicode(msg,'utf-8')
 	if type(msg) == unicode:
 		msg = {u'text':msg}
-	elif 'mid' in msg and 'seq' in msg:
+	#
+	if 'mid' in msg and 'seq' in msg:
 		del msg['mid']
 		del msg['seq']
+	#
 	ids =  [r['id'] for r in db.query("SELECT id FROM users WHERE recieve_messages=true and open_group="+str(sess.open_group)+" AND id<>"+str(sess.id))]
-	s = in_group_suggestions(sess.group_name,sess.open_group)
+	suggests = in_group_suggestions(sess.group_name,sess.open_group)
+	#
 	if 'attachments' in msg:
-		responces = bot.send(ids, emojis[sess.identity], msg, suggest=s)
+		if 'text' in msg:
+			nmsg = dict(msg)
+			del nmsg['text']
+			responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), nmsg, suggests=suggests)
+		else:
+			responces = bot.send(ids, emojis[sess.identity], msg, suggests=suggests)
 	else:
-		responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), suggest=s)
+		responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), suggest=suggests)
 	send_responces(responces,ids)
+	#
 	return sess
+
 
 def temp_group_msg(sess,msg):
 	if LOCAL_TEST:
 		print 'TEMP GROUP MSG', msg
+	#
 	if type(msg) == str:
 		msg = unicode(msg,'utf-8')
 	if type(msg) == unicode:
 		msg = {u'text':msg}
+	#
+	if 'mid' in msg and 'seq' in msg:
+		del msg['mid']
+		del msg['seq']
+	#
 	ids = []
 	suggests = []
 	for r in db.query("SELECT id, quick_replies FROM users WHERE recieve_messages=true and open_group=0 and temp_group_id="+str(sess.temp_group_id)+" AND id<>"+str(sess.id)):
 		ids.append(r['id'])
-		suggests.append(r['quick_replies'])
+		suggests.append(eval(r['quick_replies']))
 	#
 	if 'attachments' in msg:
-		responces = bot.send(ids, emojis[sess.identity], msg, suggests=suggests)
+		if 'text' in msg:
+			nmsg = dict(msg)
+			del nmsg['text']
+			responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), nmsg, suggests=suggests)
+		else:
+			responces = bot.send(ids, emojis[sess.identity], msg, suggests=suggests)
 	else:
 		responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), suggests=suggests)
 	send_responces(responces,ids)
 	#
 	return sess
 
+
+
+
 def send_responces(responces,ids):
 	i=0
 	for resp in responces:
 		if resp.status_code != 200:
+			print 'resp._content', resp._content
 			j = json.loads(resp._content)
 			if 'error' in j and 'code' in j['error'] and j['error']['code'] == 200 and 'error_subcode' in j['error'] and j['error']['error_subcode'] == 1545041:
 				# user has quit chat, delete them
@@ -206,48 +228,49 @@ def send_responces(responces,ids):
 ##### MSG FUNCTION
 
 def Chat_msg(sess,msg):
-	#
-	# TODO Check for message error
-	#
-	msg_tstamp = mid_to_tstamp(msg['mid'])
-	timedff = msg_tstamp - sess.last_sent
+	# check not spam
+	timedff = msg['timestamp'] - sess.last_sent
 	if timedff < 200:
 		print 'SPAM'
 		if TESTING:
 			return False
-
 	# Set group
 	in_temp = sess.open_group == 0
 	if in_temp:
 		if sess.temp_group_id == 0 or timedff > 600000:
-			sess = joinmake_temp_group(sess,msg_tstamp)
+			sess = joinmake_temp_group(sess,msg['timestamp'])
 		sess.status_bar = select_group(sess)
+		sess.update(quick_replies=str(sess.status_bar).replace("''","'"))
 	else:
 		if timedff > 600000:
 			set_group_identity(sess)
 		sess.status_bar = in_group_suggestions(sess.group_name, sess.open_group)
+		sess.update(quick_replies=str(sess.status_bar).replace("''","'"))
 	# Special Cases
-	if 'text' in msg:
-		r = check_text(sess,msg['text'])
+	if 'text' in msg['message']:
+		r = check_text(sess,msg['message']['text'])
 		if type(r) == str:
 			return sess, r
-		r = special_cases(sess,msg['text'])
+		r = special_cases(sess,msg['message']['text'])
 		if r is not False:
 			return r
-	elif 'attachments' in msg and 'sticker_id' in msg['attachments'][0]['payload']:
-		return sess, 'Not sent.\nCannot send stickers.'
+	if 'attachments' in msg['message'] and (msg['message']['attachments'][0]['payload'] is None or 'sticker_id' in msg['message']['attachments'][0]['payload'] or msg['message']['attachments'][0]['type'] not in ['video', 'image']):
+		if 'text' not in msg['message']:
+			return sess, 'Not sent.\nCan only send videos and images.'
+		else:
+			del msg['message']['attachments']
 	# Send Message
 	if in_temp:
-		sess = temp_group_msg(sess,msg)
-		db.query("UPDATE temp_groups SET last_msg="+str(msg_tstamp)+" WHERE id="+str(sess.temp_group_id))
+		sess = temp_group_msg(sess,msg['message'])
+		db.query("UPDATE temp_groups set last_msg=now() WHERE id="+str(sess.temp_group_id))
 	else:
-		sess = group_msg(sess,msg)
-		db.query("UPDATE groups SET last_msg="+str(msg_tstamp)+" WHERE id="+str(sess.open_group))
-	sess.update(last_sent=msg_tstamp)
+		sess = group_msg(sess,msg['message'])
+		db.query("UPDATE groups set last_msg=now() WHERE id="+str(sess.open_group))
+	sess.update(last_sent=msg['timestamp'])
 	# Give autofill if no message back quickly
 	time.sleep(10)
 	if (
-			in_temp and msg_tstamp >= db.query("SELECT last_msg from temp_groups where id="+str(sess.temp_group_id))[0]['last_msg']
-			or msg_tstamp >= db.query("SELECT last_msg from groups where id="+str(sess.open_group))[0]['last_msg']
+			in_temp and len(db.query("SELECT last_msg from temp_groups where last_msg >= NOW() - '9.9 second'::INTERVAL and id="+str(sess.temp_group_id))) == 0
+			or in_temp == False and len(db.query("SELECT last_msg from groups where last_msg >= NOW() - '9.9 second'::INTERVAL and id="+str(sess.open_group))) == 0
 		):
 		bot.send(sess.id,"Sent",suggest=sess.status_bar)
