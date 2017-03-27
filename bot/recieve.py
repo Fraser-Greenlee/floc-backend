@@ -71,7 +71,7 @@ def recieveVal(messaging, sess):
 		return handleMsg(messaging, sess)
 	# if new Get Started message
 	elif "postback" in messaging and messaging["postback"]["payload"] == "GetStarted":
-		return new_user(sess,id)
+		return new_user(sess,messaging["sender"]["id"])
 	# ignore read and delivery messages
 	elif len( set(['read','delivery']) &  set(messaging.keys()) ) > 0:
 		return sess, False
@@ -80,8 +80,9 @@ def recieveVal(messaging, sess):
 
 
 def new_user(sess,id):
+	print id
+	db.query("DELETE from users where id="+str(id))
+	db.insert('users',id=id)
 	sess.id = id
-	db.delete('users',where='id='+str(sess.id))
-	db.insert('users',id=sess.id)
 	sess.new_user = True
 	return responces.Start_msg(sess, "x")

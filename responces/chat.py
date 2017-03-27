@@ -163,6 +163,8 @@ def group_msg(sess,msg):
 	suggests = in_group_suggestions(sess.group_name,sess.open_group)
 	#
 	if 'attachments' in msg:
+		msg['attachment'] = msg['attachments'][0]
+		del msg['attachments']
 		if 'text' in msg:
 			nmsg = dict(msg)
 			del nmsg['text']
@@ -193,9 +195,11 @@ def temp_group_msg(sess,msg):
 	suggests = []
 	for r in db.query("SELECT id, quick_replies FROM users WHERE recieve_messages=true and open_group=0 and temp_group_id="+str(sess.temp_group_id)+" AND id<>"+str(sess.id)):
 		ids.append(r['id'])
-		suggests.append(eval(r['quick_replies']))
+		suggests.append(eval(r['quick_replies'].replace("''","'")))
 	#
 	if 'attachments' in msg:
+		msg['attachment'] = msg['attachments'][0]
+		del msg['attachments']
 		if 'text' in msg:
 			nmsg = dict(msg)
 			del nmsg['text']
