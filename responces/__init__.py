@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import bot, json
-from chat import Chat_msg, set_identity
+from chat import Chat_msg, set_identity, group_msg
 from quick_replies import *
 from tokens import db
 from emojis import emojis
@@ -12,6 +12,7 @@ def Start_msg(sess, msg):
 	bot.send(sess.id, "Welcome to Floc.\nFloc lets you chat anonymously with people around you.")
 	# set user's identity
 	sess = set_identity(sess)
+	group_msg(sess, "Joined")
 	sess.update(current_msg='Chat')
 
 
