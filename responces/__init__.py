@@ -24,7 +24,7 @@ def send_last_messages(id):
 	msgs = []
 	for r in db.query("SELECT data from messages where time >= "+str(min_time)+" order by time asc"):
 		msgs += make_messages(id,r['data']['identity'], r['data']['msg'])
-	bot.send(id,msgs)
+	bot.send(id,*msgs)
 
 def make_messages(id,identity,msg):
 	if type(msg) == str:
