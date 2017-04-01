@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-import bot, json
+import bot, json, time
 from chat import Chat_msg, set_identity, group_msg
 from quick_replies import *
 from tokens import db
 from emojis import emojis
 
 def Start_msg(sess, msg):
+	bot.send(sess.id, "Welcome to Floc.\nFloc lets you chat anonymously with people around you.")
+	time.sleep(1)
 	# send last 30 messages
 	send_last_messages(sess.id)
-	#
-	bot.send(sess.id, "Welcome to Floc.\nFloc lets you chat anonymously with people around you.")
 	# set user's identity
 	sess = set_identity(sess)
 	group_msg(sess, "Joined")
