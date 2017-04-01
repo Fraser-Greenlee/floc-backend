@@ -11,7 +11,7 @@ def getusers():
 def new_json_file(id):
 	print 'new', str(id)+'.json'
 	open('messages/'+str(id)+'.json', 'w').write(json.dumps({'checked_last':False,'messages':[]}))
-	time.sleep(DELAY)
+	#time.sleep(DELAY)
 
 def random_id():
 	return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10))
@@ -94,7 +94,7 @@ class User:
 			return [False, suggestions, quick_replies]
 
 	def did_receive(self,*msgs,**suggest):
-		time.sleep(DELAY)
+		#time.sleep(DELAY)
 		if self.checked_last():
 			return testbot.addresult([False, msgs, '$Nothing New'])
 		if len(self.messages()) is 0:
@@ -108,7 +108,7 @@ class User:
 		for msg in msgs:
 			try:
 				last_msg = self.messages()[-offset]
-			except:
+			except Exception as e:
 				print 'Offset Message Error:', str(e)
 				res = [False,msg,'$Err: Offset Message Error.']
 				break
@@ -130,11 +130,11 @@ class User:
 	#
 
 	def quick_reply(self,key):
-		time.sleep(DELAY)
+		#time.sleep(DELAY)
 		quick_replies = self.last_msg()['message']['quick_replies']
 		for reply in quick_replies:
 			if reply[u'title'] == unicode(key):
-				time.sleep(DELAY)
+				#time.sleep(DELAY)
 				requests.post(
 					testbot.send_to,
 					json={
@@ -168,7 +168,7 @@ class User:
 				return True
 
 	def postback(self,key):
-		time.sleep(DELAY)
+		#time.sleep(DELAY)
 		requests.post(
 			testbot.send_to,
 			json={
@@ -196,7 +196,7 @@ class User:
 			})
 
 	def sendlocation(self,**coords):
-		time.sleep(DELAY)
+		#time.sleep(DELAY)
 		if 'lat' not in coords:
 			coords['lat'] = -85.0
 		if 'long' not in coords:
@@ -243,7 +243,7 @@ class User:
 	#
 
 	def send(self,data):
-		time.sleep(DELAY)
+		#time.sleep(DELAY)
 		if type(data) == str:
 			requests.post(
 				testbot.send_to,

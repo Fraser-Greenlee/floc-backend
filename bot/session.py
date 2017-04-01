@@ -39,4 +39,9 @@ class Session(dict):
 			super(Session, self).__setattr__(name, value)
 		# return query
 		return q
+
+	def update_db(self, **cols):# update database NOT values
+		set_vals = ", ".join([col[0]+'='+self.format_val(col[1]) for col in cols.items()])
+		return db.query("UPDATE users SET "+set_vals+" WHERE id="+str(self.id))
+
 #

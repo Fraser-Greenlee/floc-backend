@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import web, bot
-from tokens import db
-from chat import set_group_identity, in_group_suggestions, select_group, group_msg, joinmake_temp_group
+'''
+
+#	Put group reply handlers here.
+
 
 def make_group_actually(sess,name):
 	name = name[0]
@@ -27,3 +28,4 @@ def open_group(sess,namegroup_id):
 	status_bar = in_group_suggestions(name,group_id)
 	group_msg(sess,u'Joined')
 	bot.send(sess.id, u'Joined #'+name, suggest=status_bar)
+'''

@@ -49,4 +49,4 @@ def results():
 					print res[1]
 
 def timestamp():
-	return int(time.time())*10**3
+	return int(time.time()*10**6)

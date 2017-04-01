@@ -32,11 +32,11 @@ def handleQuickReply(messaging, sess):
 
 
 def frompast(sess,timestamp):
-	if sess.last_time >= timestamp:
+	if sess.last_sent >= timestamp:
 		print '* PAST *'
 		return True
 	else:
-		sess.update(last_time=timestamp)
+		sess.update_db(last_sent=timestamp)
 		return False
 
 
@@ -49,11 +49,6 @@ def handleMsg(messaging, sess):
 	else:
 		r = q[0]
 		sess.set_dict(r)
-		if r['location'] is not None:
-			sess.set(
-				lat=float(r['location'][1:r['location'].index(',')]),
-				long=float(r['location'][r['location'].index(',')+1:-1])
-			)
 	# Check not from past
 	if frompast(sess, messaging['timestamp']):
 		return sess, False
@@ -72,8 +67,12 @@ def recieveVal(messaging, sess):
 	# if new Get Started message
 	elif "postback" in messaging and messaging["postback"]["payload"] == "GetStarted":
 		return new_user(sess,messaging["sender"]["id"])
-	# ignore read and delivery messages
-	elif len( set(['read','delivery']) &  set(messaging.keys()) ) > 0:
+	# update relevent cols for read and delivery msgs
+	elif 'read' in messaging:
+		db.query("UPDATE users SET last_read="+str(messaging['read']['watermark']))
+		return sess, False
+	elif 'delivery' in messaging:
+		db.query("UPDATE users SET last_recieved="+str(messaging['delivery']['watermark']))
 		return sess, False
 	else:
 		raise Exception("input is neither postback or message")

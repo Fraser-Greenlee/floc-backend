@@ -1,30 +1,49 @@
 # -*- coding: utf-8 -*-
-import bot
-from chat import Chat_msg, select_group, joinmake_temp_group
+import bot, json
+from chat import Chat_msg, set_identity
 from quick_replies import *
+from tokens import db
+from emojis import emojis
 
 def Start_msg(sess, msg):
+	# send last 30 messages
+	send_last_messages(sess.id)
+	#
 	bot.send(sess.id, "Welcome to Floc.\nFloc lets you chat anonymously with people around you.")
-	bot.send(sess.id, "First we need your location so we can see who's nearby.", suggest='$location')
-	bot.setmsg(sess, 'Location')
-
-def Location_msg(sess, msg):
-	print 'Location Message'
-	if 'attachments' not in msg['message'] or 'coordinates' not in msg['message']['attachments'][0]['payload']:
-		print 'non location'
-		bot.send(sess.id, "We need your location so we can see who's nearby.", suggest='$location')
-		return False
+	# set user's identity
+	sess = set_identity(sess)
 	sess.update(current_msg='Chat')
-	# save location
-	coords = msg['message']['attachments'][0]['payload']['coordinates']
-	# Take Longitude/2 so scales equally to lattitude
-	sess.update(location='$point('+str([coords['lat'],coords['long']/2])[1:-1]+')')# $ to stop quotes round str value
-	sess.set(lat=coords['lat'],long=coords['long']/2)
-	# set to chat
-	sug = select_group(sess)
-	if sug != False:
-		sess.update(quick_replies=str(sug).replace("'","''"))
-		bot.send(sess.id, "Done!\nYou can join chat groups from the #Groups below and chat with people nearby.", suggest=sug)
+
+
+def send_last_messages(id):
+	print 'last messages'
+	q = db.query("SELECT time from messages order by time desc limit 30")
+	if len(q) == 0:
+		return False
+	min_time = q[len(q)-1]['time']
+	msgs = []
+	for r in db.query("SELECT data from messages where time >= "+str(min_time)+" order by time asc"):
+		msgs += make_messages(id,r['data']['identity'], r['data']['msg'])
+	bot.send(id,msgs)
+
+def make_messages(id,identity,msg):
+	if type(msg) == str:
+		msg = unicode(msg,'utf-8')
+	if type(msg) == unicode:
+		msg = {u'text':msg}
+	#
+	if 'mid' in msg and 'seq' in msg:
+		del msg['mid']
+		del msg['seq']
+	#
+	if 'attachments' in msg:
+		msg['attachment'] = msg['attachments'][0]
+		del msg['attachments']
+		if 'text' in msg:
+			nmsg = dict(msg)
+			del nmsg['text']
+			return [emojis[identity]+u' '+unicode(msg['text'])]
+		else:
+			return [emojis[identity], msg]
 	else:
-		bot.send(sess.id, "Done!\nYou can make chat groups by entering '#my-group-name' below and chat with people nearby.", suggest=sug)
-	joinmake_temp_group(sess, msg['timestamp'])
+		return [emojis[identity]+u' '+unicode(msg['text'])]

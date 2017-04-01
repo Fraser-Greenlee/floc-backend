@@ -10,18 +10,10 @@ userI = 1
 
 def run():
 	clear_tables()
-	addgroups()
 	#
-	new_user()
+	# new_user()
 	#
-	clear_tables()
-	addgroups()
-	#
-	temp_messages(get_users(4))
-	#
-	base_groups(get_users(1)[0])
-	#
-	message_groups(get_users(4))
+	old_msgs()
 	#
 	actions(get_users(1)[0])
 	#
@@ -36,19 +28,9 @@ def clear_tables():
 	global userI
 	userI = 1
 	db.query("delete from users")
-	db.query("delete from groups")
-	db.query("delete from group_users")
-	db.query("delete from temp_groups")
+	db.query("delete from messages")
 	testbot.clear_messages()
 
-def addgroups():
-	db.query("""
-		INSERT INTO groups (name,location)
-		VALUES
-			('cs2',point(-85.0,0.0)),
-			('indieHackers',point(-85.0,0.0)),
-			('maths2',point(-85.00351351351,0.00351351351))
-	""")
 
 def get_users(amount):
 	global userI
@@ -56,7 +38,6 @@ def get_users(amount):
 	for id in range(amount+userI)[userI:]:
 		u = testbot.User(id)
 		u.postback("GetStarted")
-		u.sendlocation()
 		users.append(u)
 	userI += amount
 	return users
@@ -78,11 +59,21 @@ def new_user():
 	user = testbot.User()
 	user.postback("GetStarted")
 	user.did_receive(
-		"Welcome to Floc.\nFloc lets you chat anonymously with people around you.",
-		"First we need your location so we can see who's nearby."
-	)
-	user.sendlocation()
-	user.did_receive("Done!\nYou can join chat groups from the #Groups below and chat with people nearby.", suggest=['#cs2','#indieHackers','#maths2'])
+		"Welcome to Floc.\nFloc lets you chat anonymously with people around you.")
+
+#
+
+def old_msgs():
+	user = testbot.User()
+	user.postback("GetStarted")
+	listener = testbot.User()
+	listener.postback("GetStarted")
+	for i in range(31):
+		user.send(str(i))
+	#
+	new_user = testbot.User()
+	new_user.postback("GetStarted")
+	new_user.did_receive(* [str(i) for i in range(30)[1:]]+["Welcome to Floc.\nFloc lets you chat anonymously with people around you."])
 
 # Errors
 
@@ -107,73 +98,6 @@ def actions(user):
 	newIdentity = identity(user.id)
 	user.did_receive('You are now '+emojis[newIdentity])
 	user.send('@active')
-
-# Temp Groups
-
-def temp_messages(users):
-	users[0].send('Hello')
-	users[0].send('How is everyone?')
-	iden0 = identity(users[0].id)
-	users[1].did_receive(emojis[iden0]+' Hello', emojis[iden0]+' How is everyone?')
-	users[1].send('Im good')
-	iden1 = identity(users[1].id)
-	users[0].did_receive(emojis[iden1]+' Im good')
-	users[2].did_receive(emojis[iden0]+' Hello', emojis[iden0]+' How is everyone?', emojis[iden1]+' Im good')
-
-# Messaging Groups
-
-def message_groups(users):
-	group_id = str(db.query("SELECT id from groups where name='maths2'")[0]['id'])
-	users[0].quick_reply('#maths2')
-	users[1].quick_reply('#maths2')
-	users[2].quick_reply('#maths2')
-	send_recieve_groups(group_id,users)
-	reset_identity_groups(group_id,users)
-
-def reset_identity_groups(group_id,users):
-	return False
-
-	# get curr identity
-	idenOld = identity(users[0].id)
-	# set the time offset
-	users[0].time_offset = 10
-	# send message
-	users[0].send('Test')
-	# check for new identity in message
-	time.sleep(0.5)
-	idenNew = identity(users[0].id)
-	testbot.addresult([idenOld == idenNew,'not '+str(idenOld),str(idenNew)])
-	users[1].did_receive(emojis[idenNew]+' Test')
-
-def send_recieve_groups(group_id,users):
-	users[0].send('Hello')
-	users[0].send('How is everyone?')
-	iden0 = identity(users[0].id)
-	users[1].did_receive(emojis[iden0]+' Hello', emojis[iden0]+' How is everyone?')
-	users[1].send('Im good')
-	iden1 = identity(users[1].id)
-	users[0].did_receive(emojis[iden1]+' Im good')
-	users[2].did_receive(emojis[iden0]+' Hello', emojis[iden0]+' How is everyone?', emojis[iden1]+' Im good')
-
-# Making/Join/Leave Groups
-
-def base_groups(user):
-	joinleave_group(user)
-	makeleave_group(user)
-
-def joinleave_group(user):
-	user.quick_reply('#cs2')
-	user.did_receive("Joined #cs2", suggest=['leave #cs2'])
-	user.quick_reply('leave #cs2')
-	user.did_receive("Left group", suggest=['#cs2','#indieHackers','#maths2'])
-
-def makeleave_group(user):
-	user.send('#frisbae')
-	user.did_receive("Make group #frisbae?", suggest=['Yes','No'])
-	user.quick_reply('Yes')
-	user.did_receive("Joined #frisbae", suggest=['leave #frisbae'])
-	user.quick_reply('leave #frisbae')
-	user.did_receive("Left group", suggest=['#cs2','#indieHackers','#maths2','#frisbae'])
 
 # error checking
 
