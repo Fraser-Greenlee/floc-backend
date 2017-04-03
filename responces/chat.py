@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+import datetime
 import bot, random, re, web, time, json
 from emojis import emojis
 from tokens import db, TESTING, LOCAL_TEST
@@ -11,8 +11,13 @@ def active(sess):
 	return u''.join( [emojis[r['identity']] for r in db.query("SELECT identity from users where last_read >= max(last_sent) - 180000")] )
 
 def reset(sess):
+	print 'reset', sess.last_reset
+	delta = datetime.datetime.combine(datetime.date.today(), datetime.datetime.time(datetime.datetime.now())) - datetime.datetime.combine(datetime.date.today(), sess.last_reset)
+	if (delta.seconds / 60) < 10:
+		return [u'Must wait 10 minuets between resets.', sess]
 	sess = set_identity(sess)
-	group_msg(sess, 'Joined')
+	group_msg(sess, "Added", reverse=True)
+	sess.update_db(last_reset='now()')
 	return [u'You are now '+emojis[sess.identity], sess]
 
 def me(sess):
@@ -55,7 +60,7 @@ def set_identity(sess):
 
 ##
 
-def group_msg(sess,msg):
+def group_msg(sess,msg,**args):
 	if type(msg) == str:
 		msg = unicode(msg,'utf-8')
 	if type(msg) == unicode:
@@ -77,7 +82,12 @@ def group_msg(sess,msg):
 		else:
 			responces = bot.send(ids, emojis[sess.identity], msg)
 	else:
-		responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']))
+		if 'reverse' in args and args['reverse']:
+			txt = unicode(msg['text'])+u' '+emojis[sess.identity]
+		else:
+			txt = emojis[sess.identity]+u' '+unicode(msg['text'])
+		#
+		responces = bot.send(ids, txt)
 	sent_responces(responces,ids)
 	#
 	return sess

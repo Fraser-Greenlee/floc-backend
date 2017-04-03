@@ -12,13 +12,12 @@ def Start_msg(sess, msg):
 	send_last_messages(sess.id)
 	# set user's identity
 	sess = set_identity(sess)
-	group_msg(sess, "Joined")
+	group_msg(sess, "Added", reverse=True)
 	sess.update(current_msg='Chat')
 
 
 def send_last_messages(id):
-	print 'last messages'
-	q = db.query("SELECT time from messages order by time desc limit 30")
+	q = db.query("SELECT time from messages order by time desc limit 10")
 	if len(q) == 0:
 		return False
 	min_time = q[len(q)-1]['time']

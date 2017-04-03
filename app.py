@@ -10,7 +10,7 @@ def webhook():
 	if request.method == 'GET':
 		return bot.verify(request)
 	elif request.method == 'POST':
-		session = bot.Session(id=None, current_msg='Start', recieve_messages=True, last_sent=0, last_recieved=0, last_read=0, identity=0)
+		session = bot.Session(id=None, current_msg='Start', recieve_messages=True, last_sent=0, last_recieved=0, last_read=0, identity=0, last_reset=0)
 		bot.recieve(request.data, session)
 		return 'done'
 
