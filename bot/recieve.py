@@ -69,10 +69,10 @@ def recieveVal(messaging, sess):
 		return new_user(sess,messaging["sender"]["id"])
 	# update relevent cols for read and delivery msgs
 	elif 'read' in messaging:
-		db.query("UPDATE users SET notified=false, last_read="+str(messaging['read']['watermark']))
+		db.query("UPDATE users SET notified=false, last_read="+str(messaging['read']['watermark'])+" WHERE id="+str(messaging["sender"]["id"]))
 		return sess, False
 	elif 'delivery' in messaging:
-		db.query("UPDATE users SET last_recieved="+str(messaging['delivery']['watermark']))
+		db.query("UPDATE users SET last_recieved="+str(messaging['delivery']['watermark'])+" WHERE id="+str(messaging["sender"]["id"]))
 		return sess, False
 	else:
 		raise Exception("input is neither postback or message")
