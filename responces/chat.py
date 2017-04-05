@@ -8,7 +8,7 @@ from tokens import db, TESTING, LOCAL_TEST
 
 def active(sess):
 	# emojis of users who read a message within 3 minuets of the most recent message
-	return u''.join( [emojis[r['identity']] for r in db.query("SELECT identity from users where last_read >= max(last_sent) - 180000")] )
+	return u''.join( [emojis[r['identity']] for r in db.query("SELECT identity from users where notified=false")] )
 
 def reset(sess):
 	print 'reset', sess.last_reset
