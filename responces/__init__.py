@@ -7,13 +7,13 @@ from emojis import emojis
 
 def Start_msg(sess, msg):
 	bot.send(sess.id, "Welcome to Floc.\nFloc lets you chat anonymously with people around you.")
+	sess.update(current_msg='Chat')
 	time.sleep(1)
 	# send last 30 messages
 	send_last_messages(sess.id)
 	# set user's identity
 	sess = set_identity(sess)
 	group_msg(sess, "Added", reverse=True)
-	sess.update(current_msg='Chat')
 
 
 def send_last_messages(id):

@@ -69,7 +69,7 @@ def recieveVal(messaging, sess):
 		return new_user(sess,messaging["sender"]["id"])
 	# update relevent cols for read and delivery msgs
 	elif 'read' in messaging:
-		db.query("UPDATE users SET last_read="+str(messaging['read']['watermark']))
+		db.query("UPDATE users SET notified=false, last_read="+str(messaging['read']['watermark']))
 		return sess, False
 	elif 'delivery' in messaging:
 		db.query("UPDATE users SET last_recieved="+str(messaging['delivery']['watermark']))

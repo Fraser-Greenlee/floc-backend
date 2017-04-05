@@ -70,7 +70,12 @@ def group_msg(sess,msg,**args):
 		del msg['mid']
 		del msg['seq']
 	#
-	ids = [r['id'] for r in db.query("SELECT id FROM users WHERE recieve_messages=true AND id<>"+str(sess.id))]
+	q = list(db.query("SELECT id, notified, last_read FROM users WHERE recieve_messages=true AND id<>"+str(sess.id)))
+	#
+	db.query("UPDATE users SET notified=true WHERE last_read > 100 AND recieve_messages=true AND id<>"+str(sess.id))
+	notifylist = [r['notified'] is False and r['last_read'] > 100 for r in q]
+	#
+	ids = [r['id'] for r in q]
 	#
 	if 'attachments' in msg:
 		msg['attachment'] = msg['attachments'][0]
@@ -87,7 +92,7 @@ def group_msg(sess,msg,**args):
 		else:
 			txt = emojis[sess.identity]+u' '+unicode(msg['text'])
 		#
-		responces = bot.send(ids, txt)
+		responces = bot.send(ids, txt, notify=notifylist)
 	sent_responces(responces,ids)
 	#
 	return sess
