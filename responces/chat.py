@@ -83,9 +83,9 @@ def group_msg(sess,msg,**args):
 		if 'text' in msg:
 			nmsg = dict(msg)
 			del nmsg['text']
-			responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), nmsg)
+			responces = bot.send(ids, emojis[sess.identity]+u' '+unicode(msg['text']), nmsg, notify=notifylist)
 		else:
-			responces = bot.send(ids, emojis[sess.identity], msg)
+			responces = bot.send(ids, emojis[sess.identity], msg, notify=notifylist)
 	else:
 		if 'reverse' in args and args['reverse']:
 			txt = unicode(msg['text'])+u' '+emojis[sess.identity]
@@ -121,10 +121,13 @@ def save_message(identity,msg):
 def Chat_msg(sess,msg):
 	# check not spam
 	timedff = msg['timestamp'] - sess.last_sent
-	if timedff < 200:
+	if timedff < 200:# 0.2 seconds
 		print 'timedff', timedff, 'SPAM', TESTING
 		if TESTING is False:
 			return False
+	elif timedff > 420000:# 7 mins
+		sess = set_identity(sess)
+
 	# Special Cases
 	if 'text' in msg['message']:
 		r = check_text(sess,msg['message']['text'])

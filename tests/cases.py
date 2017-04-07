@@ -11,7 +11,7 @@ userI = 1
 def run():
 	clear_tables()
 	#
-	# new_user()
+	new_user()
 	#
 	old_msgs()
 	#
