@@ -16,7 +16,6 @@ def reset(sess):
 	if (delta.seconds / 60) < 10:
 		return [u'Must wait 10 minuets between resets.', sess]
 	sess = set_identity(sess)
-	group_msg(sess, "Added", reverse=True)
 	sess.update_db(last_reset='now()')
 	return [u'You are now '+emojis[sess.identity], sess]
 
